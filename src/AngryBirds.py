@@ -15,6 +15,9 @@ class AngryBirdsGame:
         # Returns a list of Bird objects
         return self.birds
 
+    def getPigs(self):
+        return self.pigs
+
     def runFrames(self,nFrames,show):
         #Runs the Angry Birds Emulator for nFrames number of frames
         self.show=show
