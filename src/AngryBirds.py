@@ -16,6 +16,7 @@ class AngryBirdsGame:
         return self.birds
 
     def getPigs(self):
+        # Returns a list of Pig objects
         return self.pigs
 
     def runFrames(self,nFrames,show):
