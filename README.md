@@ -25,3 +25,6 @@ The project is Open Source. Feel free to contribute.
 
 ####To contribute
 Pull a new topic branch to the develop branch.
+||||||| merged common ancestors
+=======
+# angrybirds
