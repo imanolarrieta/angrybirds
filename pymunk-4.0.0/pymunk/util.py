@@ -26,7 +26,7 @@ creation.
 
 """
 from __future__ import division
-__version__ = "$Id: util.py 439 2012-08-30 22:14:05Z vb@viblo.se $"
+__version__ = "$Id: AngryBirds.py 439 2012-08-30 22:14:05Z vb@viblo.se $"
 __docformat__ = "reStructuredText"
 
 from math import sqrt

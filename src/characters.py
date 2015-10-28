@@ -4,7 +4,7 @@ from pymunk import Vec2d
 
 class Bird():
     def __init__(self, distance, angle, x, y, space):
-        self.life = 20
+        self.life = 500
         mass = 5
         radius = 12
         inertia = pm.moment_for_circle(mass, 0, radius, (0, 0))
@@ -21,6 +21,12 @@ class Bird():
         space.add(body, shape)
         self.body = body
         self.shape = shape
+
+    def age(self):
+        self.life-=1
+
+    def dead(self):
+        return self.life==0
 
 
 class Pig():
