@@ -19,11 +19,28 @@ class AngryBirdsGame:
         # Returns a list of Pig objects
         return self.pigs
 
-    def runFrames(self,nFrames,show):
+    def getWoods(self):
+        # Returns a list of Pig objects
+        return self.polys
+
+    def runFrames(self,nFrames,show=False):
         #Runs the Angry Birds Emulator for nFrames number of frames
         self.show=show
         for _ in range(nFrames):
             self.run()
+
+    def humanPlay(self):
+        #Allows a human player to play the game
+        self.show = True
+        while self.running:
+            self.run()
+
+    def restartGame(self):
+        self.restart()
+        self.level.load_level()
+        self.game_state = 0
+        self.bird_path = []
+        self.score = 0
 
 
     def __init__(self):
@@ -77,7 +94,6 @@ class AngryBirdsGame:
         self.columns = []
         self.poly_points = []
         self.ball_number = 0
-        self.polys_dict = {}
         self.mouse_distance = 0
         self.rope_lenght = 90
         self.angle = 0
@@ -514,7 +530,7 @@ class AngryBirdsGame:
 
 if __name__=='__main__':
     ab = AngryBirdsGame()
-    ab.runFrames(200,True)
-    ab.runFrames(200,False)
-    ab.runFrames(200,True)
-    print(ab.getBirds())
+    ab.humanPlay()
+    pigs = ab.getPigs()
+    for bird in pigs:
+        print(bird.getPosition())

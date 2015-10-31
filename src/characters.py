@@ -22,10 +22,16 @@ class Bird():
         self.body = body
         self.shape = shape
 
+    def getPosition(self):
+        # Get Bird position
+        return self.body.position
+
     def age(self):
+        # Ages the bird by one unit
         self.life-=1
 
     def dead(self):
+        # Returns if the bird is dead or not
         return self.life==0
 
 
@@ -44,3 +50,7 @@ class Pig():
         space.add(body, shape)
         self.body = body
         self.shape = shape
+
+    def getPosition(self):
+        # Get Pig position
+        return self.body.position
