@@ -56,3 +56,15 @@ class Polygon():
             p = p - offset
             np = p
             screen.blit(rotated_logo_img, (np.x, np.y))
+
+    def getPosition(self):
+        # Get position
+        return self.body.position
+
+    def getVertices(self):
+        # Get vertices
+        return self.shape.get_vertices()
+
+    def getRadius(self):
+        # Get Radius
+        return self.shape._get_radius()

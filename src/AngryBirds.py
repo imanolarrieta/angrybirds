@@ -16,49 +16,58 @@ class AngryBirdsGame:
         return self.birds
 
     def getBirdPositions(self):
-        return [bird.body.position for bird in self.birds]
+        return [bird.getPosition() for bird in self.getBirds()]
 
     def getBirdPositionsAndRadius(self):
-        return [(bird.body.position, bird.shape._get_radius()) for bird in self.birds]
+        return [(bird.getPosition(), bird.getRadius()) for bird in self.getBirds()]
 
     def getPigs(self):
         # Returns a list of Pig objects
         return self.pigs
 
     def getPigPositionsAndRadius(self):
-        return [(pig.body.position, pig.shape._get_radius()) for pig in self.pigs]
+        return [(pig.getPosition(), pig.getRadius()) for pig in self.getPigs()]
 
-    def getPolys:
+    def getPolys(self):
         #Some useful methods: poly.shape
-        return self.polys
+        return self.beams + self.columns
 
     def getPolyFeatures(self):
-        return [(poly.body.position, poly.shape.get_vertices(), poly.shape._get_radius()) for poly in self.polys]
-
-
+        return [(poly.getPosition(), poly.getVertices(), poly.getRadius()) for poly in self.getPolys()]
 
     def getBeams(self):
-        #Some useful methods: beam.shape
         return self.beams
 
     def getBeamPositions(self):
-        return [beam.body.position for beam in self.beams]
+        return [(poly.getPosition(), poly.getVertices(), poly.getRadius()) for poly in self.getBeams()]
 
     def getColumns(self):
-        #Some useful methods: columns.shape
         return self.columns
 
     def getColumnPositions(self):
-        return [column.body.position for column in self.columns]
+        return [(poly.getPosition(), poly.getVertices(), poly.getRadius()) for poly in self.getColumns()]
 
     def getLines(self):
-        return self.static_lines
+        return self.static_lines1
 
-    def runFrames(self,nFrames,show):
+    def runFrames(self,nFrames,show=False):
         #Runs the Angry Birds Emulator for nFrames number of frames
         self.show=show
         for _ in range(nFrames):
             self.run()
+
+    def humanPlay(self):
+        #Allows a human player to play the game
+        self.show = True
+        while self.running:
+            self.run()
+
+    def restartGame(self):
+        self.restart()
+        self.level.load_level()
+        self.game_state = 0
+        self.bird_path = []
+        self.score = 0
 
 
 
@@ -114,7 +123,6 @@ class AngryBirdsGame:
         self.columns = []
         self.poly_points = []
         self.ball_number = 0
-        self.polys_dict = {}
         self.mouse_distance = 0
         self.rope_lenght = 90
         self.angle = 0
@@ -551,7 +559,7 @@ class AngryBirdsGame:
 
 if __name__=='__main__':
     ab = AngryBirdsGame()
-    ab.runFrames(200,True)
-    ab.runFrames(200,False)
-    ab.runFrames(200,True)
-    print(ab.getBirds())
+    ab.humanPlay()
+    pigs = ab.getPigs()
+    for bird in pigs:
+        print(bird.getPosition())
