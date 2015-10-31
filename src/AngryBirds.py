@@ -15,15 +15,52 @@ class AngryBirdsGame:
         # Returns a list of Bird objects
         return self.birds
 
+    def getBirdPositions(self):
+        return [bird.body.position for bird in self.birds]
+
+    def getBirdPositionsAndRadius(self):
+        return [(bird.body.position, bird.shape._get_radius()) for bird in self.birds]
+
     def getPigs(self):
         # Returns a list of Pig objects
         return self.pigs
+
+    def getPigPositionsAndRadius(self):
+        return [(pig.body.position, pig.shape._get_radius()) for pig in self.pigs]
+
+    def getPolys:
+        #Some useful methods: poly.shape
+        return self.polys
+
+    def getPolyFeatures(self):
+        return [(poly.body.position, poly.shape.get_vertices(), poly.shape._get_radius()) for poly in self.polys]
+
+
+
+    def getBeams(self):
+        #Some useful methods: beam.shape
+        return self.beams
+
+    def getBeamPositions(self):
+        return [beam.body.position for beam in self.beams]
+
+    def getColumns(self):
+        #Some useful methods: columns.shape
+        return self.columns
+
+    def getColumnPositions(self):
+        return [column.body.position for column in self.columns]
+
+    def getLines(self):
+        return self.static_lines
 
     def runFrames(self,nFrames,show):
         #Runs the Angry Birds Emulator for nFrames number of frames
         self.show=show
         for _ in range(nFrames):
             self.run()
+
+
 
 
     def __init__(self):
