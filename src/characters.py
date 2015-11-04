@@ -31,11 +31,12 @@ class Bird():
 
     def age(self):
         # Ages the bird by one unit
+        # TODO - should only age when no more movement, and then age quickly
         self.life-=1
 
     def dead(self):
         # Returns if the bird is dead or not
-        return self.life==0
+        return self.life<=0
 
 
 class Pig():

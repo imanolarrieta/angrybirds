@@ -1,4 +1,4 @@
-# Q-Learner for Angrybirds
+# Q-Learner for Angrybirds, using function approximation
 # Imanol Arrieta, Bernardo Ramos, Lars Roemheld
 # Adapted from a homework assignment in Percy Liang's class CS221 at Stanford University
 import collections
@@ -20,16 +20,22 @@ class QLearningAlgorithm():
         self.weights = collections.Counter()
         self.numIters = 0
 
-    # Return the Q function associated with the weights and features
     def getQ(self, state, action):
+        """
+        Return the Q function for the current gameState and action, computed as (linear) function approximation
+        """
         score = 0.0
         for f_name, f_val in self.featureExtractor(state, action):
             score += self.weights[f_name] * f_val
         return score
 
-    # Epsilon-greedy algorithm: with probability
-    # |explorationProb|, take a random action.
     def getAction(self, state):
+        """
+        Epsilon-greedy algorithm: with probability |explorationProb|, take a random action. Otherwise, take action that
+        maximizes expected Q
+        :param state: current gameState
+        :return: the chosen action
+        """
         self.numIters += 1
         if random.random() < self.explorationProb:
             return random.choice(self.actions(state))
