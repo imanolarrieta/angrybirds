@@ -6,7 +6,7 @@ class Bird():
     def __init__(self, distance, angle, x, y, space):
         self.life = 500
         mass = 5
-        radius = 12
+        self.radius = 12
         inertia = pm.moment_for_circle(mass, 0, radius, (0, 0))
         body = pm.Body(mass, inertia)
         body.position = x, y
@@ -14,7 +14,7 @@ class Bird():
         impulse = power * Vec2d(1, 0)
         angle = -angle
         body.apply_impulse(impulse.rotated(angle))
-        shape = pm.Circle(body, radius, (0, 0))
+        shape = pm.Circle(body, self.radius, (0, 0))
         shape.elasticity = 0.95
         shape.friction = 1
         shape.collision_type = 0
@@ -25,6 +25,9 @@ class Bird():
     def getPosition(self):
         # Get Bird position
         return self.body.position
+
+    def getRadius(self):
+        return self.radius
 
     def age(self):
         # Ages the bird by one unit
@@ -39,11 +42,11 @@ class Pig():
     def __init__(self, x, y, space):
         self.life = 20
         mass = 5
-        radius = 14
+        self.radius = 14
         inertia = pm.moment_for_circle(mass, 0, radius, (0, 0))
         body = pm.Body(mass, inertia)
         body.position = x, y
-        shape = pm.Circle(body, radius, (0, 0))
+        shape = pm.Circle(body, self.radius, (0, 0))
         shape.elasticity = 0.95
         shape.friction = 1
         shape.collision_type = 1
@@ -54,3 +57,7 @@ class Pig():
     def getPosition(self):
         # Get Pig position
         return self.body.position
+
+    def getRadius(self):
+        # Get Radius
+        return self.radius

@@ -15,13 +15,40 @@ class AngryBirdsGame:
         # Returns a list of Bird objects
         return self.birds
 
+    def getBirdPositions(self):
+        return [bird.getPosition() for bird in self.getBirds()]
+
+    def getBirdPositionsAndRadius(self):
+        return [(bird.getPosition(), bird.getRadius()) for bird in self.getBirds()]
+
     def getPigs(self):
         # Returns a list of Pig objects
         return self.pigs
 
-    def getWoods(self):
-        # Returns a list of Pig objects
-        return self.polys
+    def getPigPositionsAndRadius(self):
+        return [(pig.getPosition(), pig.getRadius()) for pig in self.getPigs()]
+
+    def getPolys(self):
+        #Some useful methods: poly.shape
+        return self.beams + self.columns
+
+    def getPolyFeatures(self):
+        return [(poly.getPosition(), poly.getVertices(), poly.getRadius()) for poly in self.getPolys()]
+
+    def getBeams(self):
+        return self.beams
+
+    def getBeamPositions(self):
+        return [(poly.getPosition(), poly.getVertices(), poly.getRadius()) for poly in self.getBeams()]
+
+    def getColumns(self):
+        return self.columns
+
+    def getColumnPositions(self):
+        return [(poly.getPosition(), poly.getVertices(), poly.getRadius()) for poly in self.getColumns()]
+
+    def getLines(self):
+        return self.static_lines1
 
     def runFrames(self,nFrames,show=False):
         #Runs the Angry Birds Emulator for nFrames number of frames
@@ -41,6 +68,8 @@ class AngryBirdsGame:
         self.game_state = 0
         self.bird_path = []
         self.score = 0
+
+
 
 
     def __init__(self):
