@@ -7,7 +7,7 @@ class Bird():
         self.life = 500
         mass = 5
         self.radius = 12
-        inertia = pm.moment_for_circle(mass, 0, radius, (0, 0))
+        inertia = pm.moment_for_circle(mass, 0, self.radius, (0, 0))
         body = pm.Body(mass, inertia)
         body.position = x, y
         power = distance * 53
@@ -43,7 +43,7 @@ class Pig():
         self.life = 20
         mass = 5
         self.radius = 14
-        inertia = pm.moment_for_circle(mass, 0, radius, (0, 0))
+        inertia = pm.moment_for_circle(mass, 0, self.radius, (0, 0))
         body = pm.Body(mass, inertia)
         body.position = x, y
         shape = pm.Circle(body, self.radius, (0, 0))

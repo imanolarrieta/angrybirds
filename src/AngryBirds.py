@@ -408,26 +408,24 @@ class AngryBirdsGame:
                             self.birds.append(bird)
                         if self.level.number_of_birds == 0:
                             self.t2 = time.time()
-
-                if (event.type == pygame.MOUSEBUTTONUP and
-                        event.button == 1 and self.mouse_pressed):
-                    # Release new bird
-                    self.mouse_pressed = False
-                    if self.level.number_of_birds > 0:
-                        self.level.number_of_birds -= 1
-                        self.t1 = time.time()*1000
-                        xo = 154
-                        yo = 156
-                        if self.mouse_distance > self.rope_lenght:
-                            self.mouse_distance = self.rope_lenght
-                        if self.x_mouse < self.sling_x+5:
-                            bird = Bird(self.mouse_distance, self.angle, xo, yo, self.space)
-                            self.birds.append(bird)
-                        else:
-                            bird = Bird(-self.mouse_distance, self.angle, xo, yo, self.space)
-                            self.birds.append(bird)
-                        if self.level.number_of_birds == 0:
-                            self.t2 = time.time()
+                #
+                # if (self.takeAction):
+                #     # Release new bird because of a take Action call
+                #     if self.level.number_of_birds > 0:
+                #         self.level.number_of_birds -= 1
+                #         self.t1 = time.time()*1000
+                #         xo = 154
+                #         yo = 156
+                #         if self.mouse_distance > self.rope_lenght:
+                #             self.mouse_distance = self.rope_lenght
+                #         if self.x_mouse < self.sling_x+5:
+                #             bird = Bird(self.mouse_distance, self.angle, xo, yo, self.space)
+                #             self.birds.append(bird)
+                #         else:
+                #             bird = Bird(-self.mouse_distance, self.angle, xo, yo, self.space)
+                #             self.birds.append(bird)
+                #         if self.level.number_of_birds == 0:
+                #             self.t2 = time.time()
                             
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                     if (self.x_mouse < 60 and self.y_mouse < 155 and self.y_mouse > 90):
