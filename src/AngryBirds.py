@@ -69,6 +69,15 @@ class AngryBirdsGame:
         self.bird_path = []
         self.score = 0
 
+    def performAction(self,angle,distance):
+        # Given an angle and some distance, performs the given action on the game.
+        self.angle = angle
+        self.mouse_distance = distance
+        self.takeAction = True
+
+    def getRopeLength(self):
+        return self.rope_lenght
+
 
 
 
@@ -129,6 +138,7 @@ class AngryBirdsGame:
         self.x_mouse = 0
         self.y_mouse = 0
         self.count = 0
+        self.takeAction =False
         self.mouse_pressed = False
         self.t1 = 0
         self.tick_to_next_circle = 10
@@ -239,6 +249,8 @@ class AngryBirdsGame:
         if dx == 0:
             dx = 0.00000000000001
         self.angle = math.atan((float(dy))/dx)
+
+
 
 
     def draw_level_cleared(self):
@@ -365,6 +377,22 @@ class AngryBirdsGame:
 
     def run(self): # runs one frame of the game
         if True:
+            if (self.takeAction):
+                    # Release new bird because of a take Action call
+                    self.takeAction = False
+                    if self.level.number_of_birds > 0:
+                        self.level.number_of_birds -= 1
+                        self.t1 = time.time()*1000
+                        xo = 154
+                        yo = 156
+                        if self.x_mouse < self.sling_x+5:
+                            bird = Bird(self.mouse_distance, self.angle, xo, yo, self.space)
+                            self.birds.append(bird)
+                        else:
+                            bird = Bird(-self.mouse_distance, self.angle, xo, yo, self.space)
+                            self.birds.append(bird)
+                        if self.level.number_of_birds == 0:
+                            self.t2 = time.time()
             #Input handling
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -400,6 +428,7 @@ class AngryBirdsGame:
                         yo = 156
                         if self.mouse_distance > self.rope_lenght:
                             self.mouse_distance = self.rope_lenght
+                        print(self.mouse_distance,self.angle)
                         if self.x_mouse < self.sling_x+5:
                             bird = Bird(self.mouse_distance, self.angle, xo, yo, self.space)
                             self.birds.append(bird)
@@ -408,24 +437,8 @@ class AngryBirdsGame:
                             self.birds.append(bird)
                         if self.level.number_of_birds == 0:
                             self.t2 = time.time()
-                #
-                # if (self.takeAction):
-                #     # Release new bird because of a take Action call
-                #     if self.level.number_of_birds > 0:
-                #         self.level.number_of_birds -= 1
-                #         self.t1 = time.time()*1000
-                #         xo = 154
-                #         yo = 156
-                #         if self.mouse_distance > self.rope_lenght:
-                #             self.mouse_distance = self.rope_lenght
-                #         if self.x_mouse < self.sling_x+5:
-                #             bird = Bird(self.mouse_distance, self.angle, xo, yo, self.space)
-                #             self.birds.append(bird)
-                #         else:
-                #             bird = Bird(-self.mouse_distance, self.angle, xo, yo, self.space)
-                #             self.birds.append(bird)
-                #         if self.level.number_of_birds == 0:
-                #             self.t2 = time.time()
+
+
                             
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                     if (self.x_mouse < 60 and self.y_mouse < 155 and self.y_mouse > 90):
@@ -578,7 +591,6 @@ class AngryBirdsGame:
 
 if __name__=='__main__':
     ab = AngryBirdsGame()
-    ab.humanPlay()
-    pigs = ab.getPigs()
-    for bird in pigs:
-        print(bird.getPosition())
+    ab.runFrames(100,show=True)
+    ab.performAction(0,-70.9)
+    ab.runFrames(200,show=True)
