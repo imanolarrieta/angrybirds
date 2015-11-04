@@ -1,0 +1,36 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{Geramifard, Klein, Dann, Dabney, and
+  How}{Geramifard et~al.}{2013}]{RLPy}
+Geramifard, A., R.~H. Klein, C.~Dann, W.~Dabney, and J.~P. How (2013).
+\newblock {RLPy: The Reinforcement Learning Library for Education and
+  Research}.
+\newblock \url{http://acl.mit.edu/RLPy}.
+
+\bibitem[\protect\citeauthoryear{Jaksch, Ortner, and Auer}{Jaksch
+  et~al.}{2010}]{UCRL}
+Jaksch, T., R.~Ortner, and P.~Auer (2010, August).
+\newblock Near-optimal regret bounds for reinforcement learning.
+\newblock {\em J. Mach. Learn. Res.\/}~{\em 11}, 1563--1600.
+
+\bibitem[\protect\citeauthoryear{Lagoudakis, Parr, and Bartlett}{Lagoudakis
+  et~al.}{2003}]{LSPI}
+Lagoudakis, M.~G., R.~Parr, and L.~Bartlett (2003).
+\newblock Least-squares policy iteration.
+\newblock {\em Journal of Machine Learning Research\/}~{\em 4}, 2003.
+
+\bibitem[\protect\citeauthoryear{Osband, Russo, and Roy}{Osband
+  et~al.}{2013}]{PSRL}
+Osband, I., D.~Russo, and B.~V. Roy (2013).
+\newblock (more) efficient reinforcement learning via posterior sampling.
+\newblock In C.~Burges, L.~Bottou, M.~Welling, Z.~Ghahramani, and K.~Weinberger
+  (Eds.), {\em Advances in Neural Information Processing Systems 26}, pp.\
+  3003--3011.
+
+\bibitem[\protect\citeauthoryear{Sutton and Barto}{Sutton and
+  Barto}{1998}]{Sutton}
+Sutton, R.~S. and A.~G. Barto (1998).
+\newblock {\em Introduction to Reinforcement Learning\/} (1st ed.).
+\newblock Cambridge, MA, USA: MIT Press.
+
+\end{thebibliography}

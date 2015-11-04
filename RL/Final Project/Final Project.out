@@ -1,0 +1,20 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{The platform}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Agent}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Domain}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Representation}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{Policy}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.5}{Experiment}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.6}{Experiment Evaluation}{section.2}% 8
+\BOOKMARK [1][-]{section.3}{Algorithms}{}% 9
+\BOOKMARK [2][-]{subsection.3.1}{UCRL}{section.3}% 10
+\BOOKMARK [2][-]{subsection.3.2}{PSRL}{section.3}% 11
+\BOOKMARK [2][-]{subsection.3.3}{SARSA}{section.3}% 12
+\BOOKMARK [2][-]{subsection.3.4}{LSPI}{section.3}% 13
+\BOOKMARK [1][-]{section.4}{MDP Chain}{}% 14
+\BOOKMARK [2][-]{subsection.4.1}{Optimal Performance}{section.4}% 15
+\BOOKMARK [2][-]{subsection.4.2}{Results}{section.4}% 16
+\BOOKMARK [1][-]{section.5}{GridWorld}{}% 17
+\BOOKMARK [2][-]{subsection.5.1}{Optimal Performance}{section.5}% 18
+\BOOKMARK [2][-]{subsection.5.2}{Results}{section.5}% 19
+\BOOKMARK [1][-]{section.6}{Conclusions}{}% 20

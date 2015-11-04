@@ -1,0 +1,9 @@
+\beamer@endinputifotherversion {3.33pt}
+\beamer@sectionintoc {1}{Games}{2}{0}{1}
+\beamer@sectionintoc {2}{Idea}{9}{0}{2}
+\beamer@sectionintoc {3}{Model Setup}{10}{0}{3}
+\beamer@sectionintoc {4}{Preprocessing}{16}{0}{4}
+\beamer@sectionintoc {5}{Algorithm}{17}{0}{5}
+\beamer@sectionintoc {6}{Convolutional Neural Network}{18}{0}{6}
+\beamer@sectionintoc {7}{Results}{19}{0}{7}
+\beamer@sectionintoc {8}{Key Insights}{21}{0}{8}

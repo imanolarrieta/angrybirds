@@ -1,0 +1,52 @@
+This is BibTeX, Version 0.99d (TeX Live 2014)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: Final Project.aux
+The style file: chicago.bst
+Database file #1: biblio.bib
+Warning--entry type for "RLPy" isn't style-file defined
+--line 47 of file biblio.bib
+Warning--string name "april" is undefined
+--line 51 of file biblio.bib
+Warning--empty publisher in PSRL
+You've used 5 entries,
+            2861 wiz_defined-function locations,
+            648 strings with 5736 characters,
+and the built_in function-call counts, 3963 in all, are:
+= -- 312
+> -- 347
+< -- 1
++ -- 105
+- -- 109
+* -- 383
+:= -- 722
+add.period$ -- 15
+call.type$ -- 5
+change.case$ -- 40
+chr.to.int$ -- 5
+cite$ -- 6
+duplicate$ -- 99
+empty$ -- 215
+format.name$ -- 129
+if$ -- 749
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 5
+newline$ -- 28
+num.names$ -- 52
+pop$ -- 35
+preamble$ -- 1
+purify$ -- 71
+quote$ -- 0
+skip$ -- 108
+stack$ -- 0
+substring$ -- 183
+swap$ -- 35
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 90
+warning$ -- 1
+while$ -- 41
+width$ -- 0
+write$ -- 69
+(There were 3 warnings)
