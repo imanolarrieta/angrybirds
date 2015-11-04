@@ -363,7 +363,7 @@ class AngryBirdsGame:
             space.remove(pig.shape, pig.shape.body)
             self.pigs.remove(pig)
 
-    def run(self):
+    def run(self): # runs one frame of the game
         if True:
             #Input handling
             for event in pygame.event.get():

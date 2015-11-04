@@ -1,3 +1,6 @@
+# DEPRECATED. This is the old original, superceded by AngryBirds.py
+# Original by estevaofon, https://github.com/estevaofon
+
 import os
 import sys
 import math
@@ -133,9 +136,9 @@ def distance(xo, yo, x, y):
 
 def load_music():
     """Load the music"""
-    song1 = '../resources/sounds/angry-birds.mp3'
-    pygame.mixer.music.load(song1)
-    pygame.mixer.music.play(-1)
+    # song1 = '../resources/sounds/angry-birds.mp3'
+    # pygame.mixer.music.load(song1)
+    # pygame.mixer.music.play(-1)
 
 
 def sling_action():
