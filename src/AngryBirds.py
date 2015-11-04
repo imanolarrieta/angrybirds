@@ -35,18 +35,6 @@ class AngryBirdsGame:
     def getPolyFeatures(self):
         return [(poly.getPosition(), poly.getVertices(), poly.getRadius()) for poly in self.getPolys()]
 
-    def getBeams(self):
-        return self.beams
-
-    def getBeamPositions(self):
-        return [(poly.getPosition(), poly.getVertices(), poly.getRadius()) for poly in self.getBeams()]
-
-    def getColumns(self):
-        return self.columns
-
-    def getColumnPositions(self):
-        return [(poly.getPosition(), poly.getVertices(), poly.getRadius()) for poly in self.getColumns()]
-
     def getLines(self):
         return self.static_lines1
 
@@ -77,8 +65,6 @@ class AngryBirdsGame:
 
     def getRopeLength(self):
         return self.rope_lenght
-
-
 
 
     def __init__(self):
@@ -119,7 +105,6 @@ class AngryBirdsGame:
         self.play_button = self.buttons.subsurface(rect).copy()
         self.clock = pygame.time.Clock()
         self.running = True
-
 
         # the base of the physics
         self.space = pm.Space()
@@ -212,7 +197,6 @@ class AngryBirdsGame:
         dy = y - yo
         d = ((dx ** 2) + (dy ** 2)) ** 0.5
         return d
-
 
 
     def sling_action(self):
@@ -401,17 +385,21 @@ class AngryBirdsGame:
                     self.running = False
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_w:
                     # Toggle wall
-                    if wall:
+                    if self.wall:
                         self.space.remove(self.static_lines1)
-                        wall = False
+                        self.wall = False
+                        print('Wall off')
                     else:
                         self.space.add(self.static_lines1)
-                        wall = True
+                        self.wall = True
+                        print('Wall on')
 
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+                    print('Now in space mode')
                     self.space.gravity = (0.0, -10.0)
                     self.level.bool_space = True
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_n:
+                    print('Back in normal mode')
                     self.space.gravity = (0.0, -700.0)
                     self.level.bool_space = False
                 if (pygame.mouse.get_pressed()[0] and self.x_mouse > 100 and
@@ -428,7 +416,8 @@ class AngryBirdsGame:
                         yo = 156
                         if self.mouse_distance > self.rope_lenght:
                             self.mouse_distance = self.rope_lenght
-                        print(self.mouse_distance,self.angle)
+
+                        # Bird is initiated with power ~ distance, angle, x, y, space):
                         if self.x_mouse < self.sling_x+5:
                             bird = Bird(self.mouse_distance, self.angle, xo, yo, self.space)
                             self.birds.append(bird)
