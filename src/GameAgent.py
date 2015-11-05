@@ -7,8 +7,9 @@
 # TODO just pretend API exists already
 from QLearner import QLearningAlgorithm
 from AngryBirds import AngryBirdsGame
-from abAPI import GameState
 import math
+from abAPI import *
+from util import *
 
 def API_gamestate():
     # TODO
@@ -51,7 +52,7 @@ class angryAgent:
 
         features = []
         # rounded pig position and action indicator features
-        for pos in state.birds['positions']:
+        for pos in state.pigs['positions']:
             features.append((('pigpos', (round(pos[0], -1), round(pos[1], -1)), action), 1))
 
         return features
@@ -60,27 +61,37 @@ class angryAgent:
     def getAction(self, state): return self.learner.getAction(state)
     def incorporateFeedback(self, state, action, reward, newState): return self.learner.incorporateFeedback(state, action, reward, newState)
 
+def actions(x):
+    return [(-1.0, 30), (-0.5, 30), (0.0, 30), (0.5, 30), (1.0, 30)]
 
 if __name__=='__main__':
-    ab = AngryBirdsGame()
+    ab = AngryBirdsMDP()
     agent = angryAgent(explorationProb=0.3)
     RUN_FAST = False  # Set this to False to wait until state is steadied before taking new action (important for learning)
 
-    ab.runFrames(20,show=True)
-    # Learn Loop, baby!
-    oldState = None
-    actions = [(-1.0, 30), (-0.5, 30), (0.0, 30), (0.5, 30), (1.0, 30)]
-    while ab.running:
-        currentGameState = GameState(ab)
-        currentScore = ab.getScore()
-        if oldState: agent.incorporateFeedback(oldState, (actionAngle, actionDistance), currentScore-oldScore, currentGameState)
-        oldState = currentGameState
-        oldScore = currentScore
+    rl = QLearningAlgorithm(actions=actions,featureExtractor=agent.featureExtractor,discount=ab.discount(),\
+                            explorationProb=0.3)
+    simulate(ab,rl,numTrials=10, maxIterations=1000, verbose=True)
 
-        actionAngle, actionDistance = agent.getAction(currentGameState)
-        ab.performAction(actionAngle, actionDistance)
 
-        if not RUN_FAST:
-            ab.runUntilStatic(show=False)
-            ab.runFrames(5, show=True)
-        else: ab.runFrames(30, show=True)
+    # # Learn Loop, baby!
+    # oldState = None
+    # actions = [(-1.0, 30), (-0.5, 30), (0.0, 30), (0.5, 30), (1.0, 30)]
+
+    # while ab.running:
+    #     currentGameState = GameState(ab)
+    #     currentScore = ab.getScore()
+    #     if oldState: agent.incorporateFeedback(oldState, (actionAngle, actionDistance), currentScore-oldScore, currentGameState)
+    #     oldState = currentGameState
+    #     oldScore = currentScore
+    #
+    #     actionAngle, actionDistance = agent.getAction(currentGameState)
+    #     ab.performAction(actionAngle, actionDistance)
+    #
+    #     if not RUN_FAST:
+    #         ab.runUntilStatic(show=False)
+    #         ab.runFrames(5, show=True)
+    #     else: ab.runFrames(30, show=True)
+
+
+
