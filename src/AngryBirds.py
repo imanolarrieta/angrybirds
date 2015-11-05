@@ -51,10 +51,21 @@ class AngryBirdsGame:
     def getLines(self):
         return self.static_lines1
 
+    def getScore(self):
+        return self.score
+
     def runFrames(self,nFrames,show=False):
         #Runs the Angry Birds Emulator for nFrames number of frames
         self.show=show
         for _ in range(nFrames):
+            self.run()
+
+    def runUntilStatic(self, show=False):
+        """
+        Runs the game (i.e. n frames) until it has become static again. Useful to wait for the successor state of an action
+        """
+        # TODO - currently uses birds as a proxy -- in edge cases, beams may still be moving although all birds have gone. May want to check for this
+        while self.birds and self.running:
             self.run()
 
     def humanPlay(self):
@@ -75,6 +86,7 @@ class AngryBirdsGame:
         self.angle = angle
         self.mouse_distance = distance
         self.takeAction = True
+        self.run()  # Need to run one frame for this to take effect.
 
     def getRopeLength(self):
         return self.rope_lenght
@@ -593,6 +605,8 @@ class AngryBirdsGame:
 
 if __name__=='__main__':
     ab = AngryBirdsGame()
-    ab.runFrames(100,show=True)
-    ab.performAction(0,-70.9)
-    ab.runFrames(200,show=True)
+    # ab.runFrames(50,show=True)
+    # ab.performAction(0,-70.9)
+    # ab.runUntilStatic(show=True)
+    print('Now in human play')
+    ab.humanPlay()
