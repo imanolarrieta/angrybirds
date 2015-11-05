@@ -11,6 +11,10 @@ from level import Level
 
 class AngryBirdsGame:
     show = False
+
+    def getScore(self):
+        return self.score
+
     def getBirds(self):
         # Returns a list of Bird objects
         return self.birds
@@ -18,12 +22,21 @@ class AngryBirdsGame:
     def getBirdPositions(self):
         return [bird.getPosition() for bird in self.getBirds()]
 
+    def getBirdRadii(self): 
+        return [bird.getRadius() for bird in self.getBirds()]
+
     def getBirdPositionsAndRadius(self):
         return [(bird.getPosition(), bird.getRadius()) for bird in self.getBirds()]
 
     def getPigs(self):
         # Returns a list of Pig objects
         return self.pigs
+
+    def getPigPositions(self):
+        return [bird.getPosition() for bird in self.getBirds()]
+
+    def getPigRadii(self): 
+        return [pig.getRadius() for pig in self.getPigs()] 
 
     def getPigPositionsAndRadius(self):
         return [(pig.getPosition(), pig.getRadius()) for pig in self.getPigs()]
