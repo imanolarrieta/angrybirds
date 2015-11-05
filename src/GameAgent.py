@@ -22,16 +22,16 @@ class angryAgent:
         """
         returns a list of allowed actions given a game state. This is where discretization of the action space
         happens. Currently ignores given state, since all actions are always possible.
-        Angles: value is in radian (2pi = full circle) 0 is straight to the right.
+        Angles: value is in radian (2pi = full circle). 0 is straight to the left, i.e. pi is straight to right
                 negative values are counter-clockwise
                 positive values are clockwise
-        Distance: just keep it negative.
+        Distance: just keep it positive (normally l2-norm of mousepos-slingpos).
         :return: A list of allowed actions (angle, distance) tuples, where angle and distance are floating point numbers from the slingshot
         """
         # Current setting: 45 options, given by 5 distances (=launch power) and 9 angles.
         # TODO: test if reducing number of distances and increasing angles helps performance (intuition)
-        allowedAngles = [x/10.0 * math.pi for x in range(-5, 3, 1)] # -pi/2 (90deg upwards) to pi/4 (45deg downwards)
-        allowedDistances = range(-90, -10+1, 20)
+        allowedAngles = [x/10.0 * math.pi for x in range(5, 13, 1)] # 0.5pi (90deg upwards) to 1.25pi (45deg downwards)
+        allowedDistances = range(10, 90+1, 20)
         return [(a, d) for a in allowedAngles for d in allowedDistances]
 
     def featureExtractor(self, state, action):
@@ -56,7 +56,7 @@ if __name__=='__main__':
     ab.runFrames(20,show=True)
     # Learn Loop, baby!
     oldState = None
-    #actions = [(0.0, 30), (0.5, 30), (1.0, 30), (-0.5, 30), (-1.0, 30)]
+    actions = [(-1.0, 30), (-0.5, 30), (0.0, 30), (0.5, 30), (1.0, 30)]
     for iter in range(100):
         currentGameState = API_gamestate()
         currentScore = ab.getScore()
@@ -65,8 +65,6 @@ if __name__=='__main__':
         oldScore = currentScore
 
         actionAngle, actionDistance = agent.getAction(currentGameState)
-        #actionAngle, actionDistance = actions[iter]
-        #print(actions[iter])
         ab.performAction(actionAngle, actionDistance)
         ab.runUntilStatic(show=True)
         #ab.runFrames(30, show=True)
