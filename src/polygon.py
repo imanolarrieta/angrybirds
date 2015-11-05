@@ -27,6 +27,9 @@ class Polygon():
         """Convert pymunk to pygame coordinates"""
         return int(p.x), int(-p.y+600)
 
+    def getVelocity(self):
+        return abs(self.body.velocity[1])
+
     def draw_poly(self, element, screen):
         """Draw beams and columns"""
         poly = self.shape
