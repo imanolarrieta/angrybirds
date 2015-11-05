@@ -31,7 +31,7 @@ class angryAgent:
         # Current setting: 45 options, given by 5 distances (=launch power) and 9 angles.
         # TODO: test if reducing number of distances and increasing angles helps performance (intuition)
         allowedAngles = [x/10.0 * math.pi for x in range(5, 13, 1)] # 0.5pi (90deg upwards) to 1.25pi (45deg downwards)
-        allowedDistances = range(10, 90+1, 20)
+        allowedDistances = range(20, 90+1, 20)
         return [(a, d) for a in allowedAngles for d in allowedDistances]
 
     def featureExtractor(self, state, action):
@@ -53,11 +53,14 @@ if __name__=='__main__':
     ab = AngryBirdsGame()
     agent = angryAgent(explorationProb=1.0)
 
+    RUN_FAST = False
+
     ab.runFrames(20,show=True)
     # Learn Loop, baby!
     oldState = None
     actions = [(-1.0, 30), (-0.5, 30), (0.0, 30), (0.5, 30), (1.0, 30)]
     for iter in range(100):
+        if not ab.running: break # allow closing the window
         currentGameState = API_gamestate()
         currentScore = ab.getScore()
         if oldState: agent.incorporateFeedback(oldState, (actionAngle, actionDistance), currentScore-oldScore, currentGameState)
@@ -65,6 +68,7 @@ if __name__=='__main__':
         oldScore = currentScore
 
         actionAngle, actionDistance = agent.getAction(currentGameState)
+        print(actionAngle, actionDistance)
         ab.performAction(actionAngle, actionDistance)
-        ab.runUntilStatic(show=True)
-        #ab.runFrames(30, show=True)
+        if not RUN_FAST: ab.runUntilStatic(show=True)
+        else: ab.runFrames(30, show=True)
