@@ -40,7 +40,9 @@ class QLearningAlgorithm():
         if random.random() < self.explorationProb:
             return random.choice(self.actions(state))
         else:
-            return max((self.getQ(state, action), action) for action in self.actions(state))[1]
+            options = [(self.getQ(state, action), action) for action in self.actions(state)]
+            bestVal = max(options)[0]
+            return random.choice([opt[1] for opt in options if opt[0] == bestVal])
 
     # Call this function to get the step size to update the weights.
     def getStepSize(self):

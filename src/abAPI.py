@@ -31,6 +31,7 @@ class AngryBirdsMDP:
     # Return set of actions possible from |state|.
     def actions(self, state):
         #If number of active birds > 0, return possible angles and slingshot extensions
+        # LR - this is implemented in GameAgent.py already
         raise NotImplementedError("Override me")
 
     # Return a list of (newState, prob, reward) tuples corresponding to edges

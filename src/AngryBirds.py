@@ -22,7 +22,7 @@ class AngryBirdsGame:
     def getBirdPositions(self):
         return [bird.getPosition() for bird in self.getBirds()]
 
-    def getBirdRadii(self): 
+    def getBirdRadii(self):
         return [bird.getRadius() for bird in self.getBirds()]
 
     def getBirdPositionsAndRadius(self):
@@ -32,11 +32,11 @@ class AngryBirdsGame:
         # Returns a list of Pig objects
         return self.pigs
 
-    def getPigPositions(self):
-        return [bird.getPosition() for bird in self.getBirds()]
+    def getPigPositions(self): # TODO note (LR): this is currently inconsistent to other getters, but useful...
+        return [(pig.getPosition()[0], pig.getPosition()[1]) for pig in self.getPigs()]
 
-    def getPigRadii(self): 
-        return [pig.getRadius() for pig in self.getPigs()] 
+    def getPigRadii(self):
+        return [pig.getRadius() for pig in self.getPigs()]
 
     def getPigPositionsAndRadius(self):
         return [(pig.getPosition(), pig.getRadius()) for pig in self.getPigs()]
@@ -65,6 +65,7 @@ class AngryBirdsGame:
         Runs the game (i.e. n frames) until it has become static again. Useful to wait for the successor state of an action
         """
         # TODO - currently uses birds as a proxy -- in edge cases, beams may still be moving although all birds have gone. May want to check for this
+        self.show=show
         while self.birds and self.running:
             self.run()
 
