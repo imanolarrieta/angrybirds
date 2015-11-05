@@ -4,11 +4,11 @@ from pymunk import Vec2d
 
 class Bird():
     def __init__(self, distance, angle, x, y, space):
-        self.life = 500
+        self.life = 100
         mass = 5
         self.radius = 12
-        inertia = pm.moment_for_circle(mass, 0, self.radius, (0, 0))
-        body = pm.Body(mass, inertia)
+        self.inertia = pm.moment_for_circle(mass, 0, self.radius, (0, 0))
+        body = pm.Body(mass, self.inertia)
         body.position = x, y
         power = distance * 53
         impulse = power * Vec2d(1, 0)
@@ -29,10 +29,15 @@ class Bird():
     def getRadius(self):
         return self.radius
 
-    def age(self):
-        # Ages the bird by one unit
-        # TODO - should only age when no more movement, and then age quickly
-        self.life-=1
+    def getVelocity(self):
+        return abs(self.body.velocity[1])
+
+    def ageWhenStatic(self):
+        # Ages the bird by one unit when no more movement.
+        if self.getVelocity()<10:
+            self.life-=1
+        else:
+            self.life = 100
 
     def dead(self):
         # Returns if the bird is dead or not
@@ -62,3 +67,6 @@ class Pig():
     def getRadius(self):
         # Get Radius
         return self.radius
+
+    def getVelocity(self):
+            return abs(self.body.velocity[1])

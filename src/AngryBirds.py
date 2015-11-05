@@ -15,6 +15,9 @@ class AngryBirdsGame:
     def getScore(self):
         return self.score
 
+    def getNumberRemainingBirds(self):
+        return self.level.number_of_birds
+
     def getBirds(self):
         # Returns a list of Bird objects
         return self.birds
@@ -30,7 +33,7 @@ class AngryBirdsGame:
 
     def getPigs(self):
         # Returns a list of Pig objects
-        return self.pigs
+        return self.level.pigs
 
     def getPigPositions(self): # TODO note (LR): this is currently inconsistent to other getters, but useful...
         return [(pig.getPosition()[0], pig.getPosition()[1]) for pig in self.getPigs()]
@@ -64,10 +67,26 @@ class AngryBirdsGame:
         """
         Runs the game (i.e. n frames) until it has become static again. Useful to wait for the successor state of an action
         """
-        # TODO - currently uses birds as a proxy -- in edge cases, beams may still be moving although all birds have gone. May want to check for this
         self.show=show
-        while self.birds and self.running:
+        while (not self.isStatic()) and self.running:
             self.run()
+
+    def isStatic(self):
+        """
+        Checks that every bird, polygon and pig are static.
+
+        """
+         # TODO - polys and pigs may have velocity zero but because of breaking point. This is unlikely but would like to check.
+
+        if len(self.getBirds())>0:
+            return False
+        for pig in self.getPigs():
+            if pig.getVelocity()>8:
+                return False
+        for poly in self.getPolys():
+            if poly.getVelocity()>8:
+                return False
+        return True
 
     def humanPlay(self):
         #Allows a human player to play the game
@@ -527,7 +546,7 @@ class AngryBirdsGame:
                 if bird.dead():
                     self.birds_to_remove.append(bird)
                 else:
-                    bird.age()
+                    bird.ageWhenStatic()
                 p = self.to_pygame(bird.shape.body.position)
                 x, y = p
                 x -= 22
@@ -606,8 +625,8 @@ class AngryBirdsGame:
 
 if __name__=='__main__':
     ab = AngryBirdsGame()
-    # ab.runFrames(50,show=True)
-    # ab.performAction(0,-70.9)
-    # ab.runUntilStatic(show=True)
-    print('Now in human play')
-    ab.humanPlay()
+    ab.runFrames(50,show=True)
+    ab.performAction(0,-60.9)
+    ab.runUntilStatic(show=True)
+    # print('Now in human play')
+    # ab.humanPlay()
