@@ -30,11 +30,17 @@ class Bird():
         return self.radius
 
     def getVelocity(self):
-        return abs(self.body.velocity[1])
+        return min(abs(self.body.velocity[0]),abs(self.body.velocity[1]))
+
+    def getDirection(self):
+        if self.body.velocity[0]<0:
+            return 'left'
+        else:
+            return 'right'
 
     def ageWhenStatic(self):
         # Ages the bird by one unit when no more movement.
-        if self.getVelocity()<10:
+        if self.getVelocity()<50 or self.getDirection()=='left':
             self.life-=1
         else:
             self.life = 100

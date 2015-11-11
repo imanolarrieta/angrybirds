@@ -68,8 +68,9 @@ class AngryBirdsGame:
         Runs the game (i.e. n frames) until it has become static again. Useful to wait for the successor state of an action
         """
         self.show=show
-        while (not self.isStatic()) and self.running:
+        while (not self.isStatic() and not self.game_state==4):
             self.run()
+
 
     def isStatic(self):
         """
@@ -161,6 +162,8 @@ class AngryBirdsGame:
         self.beams = []
         self.columns = []
         self.poly_points = []
+        self.pigs_to_remove=[]
+        self.birds_to_remove=[]
         self.ball_number = 0
         self.mouse_distance = 0
         self.rope_lenght = 90
@@ -391,7 +394,7 @@ class AngryBirdsGame:
 
     def post_solve_pig_wood(self,space, arbiter):
         """Collision between pig and wood"""
-        pigs_to_remove = []
+        self.pigs_to_remove = []
         if arbiter.total_impulse.length > 700:
             pig_shape, wood_shape = arbiter.shapes
             for pig in self.pigs:
@@ -399,8 +402,8 @@ class AngryBirdsGame:
                     pig.life -= 20
                     self.score += 10000
                     if pig.life <= 0:
-                        pigs_to_remove.append(pig)
-        for pig in pigs_to_remove:
+                        self.pigs_to_remove.append(pig)
+        for pig in self.pigs_to_remove:
             space.remove(pig.shape, pig.shape.body)
             self.pigs.remove(pig)
 
@@ -536,8 +539,7 @@ class AngryBirdsGame:
                 else:
                     pygame.draw.line(self.screen, (0, 0, 0), (self.sling_x, self.sling_y-8),
                                      (self.sling2_x, self.sling2_y-7), 5)
-            self.birds_to_remove = []
-            self.pigs_to_remove = []
+
             self.counter += 1
             # Draw birds
             for bird in self.birds:
@@ -567,6 +569,8 @@ class AngryBirdsGame:
             for pig in self.pigs_to_remove:
                 self.space.remove(pig.shape, pig.shape.body)
                 self.pigs.remove(pig)
+            self.birds_to_remove = []
+            self.pigs_to_remove = []
             # Draw static lines
             for line in self.static_lines:
                 body = line.body
@@ -579,10 +583,13 @@ class AngryBirdsGame:
             # Draw pigs
             for pig in self.pigs:
                 i += 1
-                # print (i,pig.life)
                 pig = pig.shape
                 if pig.body.position.y < 0:
                     self.pigs_to_remove.append(pig)
+                if pig.body.position.x < 0 or pig.body.position.x >1200:
+                    print('uluau')
+                    self.pigs_to_remove.append(pig)
+                print(pig.body.position)
 
                 p = self.to_pygame(pig.body.position)
                 x, y = p
@@ -619,14 +626,14 @@ class AngryBirdsGame:
             self.draw_level_failed()
             if (self.show==True):
                 pygame.display.flip()
-            self.clock.tick(50)
+            self.clock.tick(500)
             pygame.display.set_caption("fps: " + str(self.clock.get_fps()))
 
 
 if __name__=='__main__':
     ab = AngryBirdsGame()
     ab.runFrames(50,show=True)
-    ab.performAction(0,-60.9)
+    ab.performAction(-0.3,-70.9)
     ab.runUntilStatic(show=True)
     # print('Now in human play')
     # ab.humanPlay()
