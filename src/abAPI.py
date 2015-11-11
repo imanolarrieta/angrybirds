@@ -20,7 +20,7 @@ class AngryBirdsMDP:
     # Initializes the game
     def __init__(self):
         self.game = AngryBirds.AngryBirdsGame()
-        self.show = True
+        self.show=True
 
     def showLearning(self):
         self.show = True
@@ -94,7 +94,6 @@ class GameState():
         self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
 
     def isEnd(self):
-        print(self.pigs['number'])
         return self.nbirds==0 or self.pigs['number']==0
 
     def isWin(self):

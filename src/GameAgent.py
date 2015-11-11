@@ -92,9 +92,6 @@ class angryAgent:
     def getAction(self, state): return self.learner.getAction(state)
     def incorporateFeedback(self, state, action, reward, newState): return self.learner.incorporateFeedback(state, action, reward, newState)
 
-def actions(x):
-    return [(-1.0, 30), (-0.5, 30), (0.0, 30), (0.5, 30), (1.0, 30)]
-
 if __name__=='__main__':
     ab = AngryBirdsMDP()
     agent = angryAgent(explorationProb=0.3)
@@ -102,7 +99,7 @@ if __name__=='__main__':
 
     rl = QLearningAlgorithm(actions=actions,featureExtractor=agent.featureExtractor,discount=ab.discount(),\
                             explorationProb=0.3)
-    simulate(ab,rl,numTrials=10, maxIterations=1000, verbose=True)
+    simulate(ab,rl,numTrials=20, maxIterations=1000, verbose=True, show=True)
 
 
     # # Learn Loop, baby!
