@@ -49,17 +49,21 @@ class AngryBirdsMDP:
     # If IsEnd(state), return the empty list.
     def succAndReward(self, state, action):
         #Do we have to check first if |state| corresponds to the current state of the game? If they don't coincide, use GameState to redefine the state of self.game
+
+        if state.isEnd():
+            if state.isWin():
+                self.game.startNewLevel()
+                return (GameState(self.game),self.game.getScore())
+            else:
+                return (None,-1000)
+
         pastscore = self.game.getScore()
         angle = action[0]
         distance = action[1]
         #Run action
         self.game.performAction(angle, distance)
         self.game.runUntilStatic(self.show)
-        if state.isEnd():
-            if state.isWin():
-                return (None,self.game.getScore())
-            else:
-                return (None,-1000)
+
 
         #Calculate reward
         reward = self.game.getScore() - pastscore

@@ -16,7 +16,7 @@ class AngryBirdsGame:
         return self.score
 
     def getNumberRemainingBirds(self):
-        return self.level.number_of_birds
+        return self.level.number_of_birds + len(self.birds)
 
     def getBirds(self):
         # Returns a list of Bird objects
@@ -112,6 +112,15 @@ class AngryBirdsGame:
     def getRopeLength(self):
         return self.rope_lenght
 
+    def startNewLevel(self):
+        self.restart()
+        self.level.number += 1
+        self.game_state = 0
+        self.level.load_level()
+        self.score = 0
+        self.bird_path = []
+        self.bonus_score_once = True
+
 
     def __init__(self):
         pygame.init()
@@ -162,8 +171,6 @@ class AngryBirdsGame:
         self.beams = []
         self.columns = []
         self.poly_points = []
-        self.pigs_to_remove=[]
-        self.birds_to_remove=[]
         self.ball_number = 0
         self.mouse_distance = 0
         self.rope_lenght = 90
@@ -190,7 +197,7 @@ class AngryBirdsGame:
         self.bold_font = pygame.font.SysFont("arial", 30, bold=True)
         self.bold_font2 = pygame.font.SysFont("arial", 40, bold=True)
         self.bold_font3 = pygame.font.SysFont("arial", 50, bold=True)
-        self.wall = False
+        self.wall = True
 
         # Static floor
         self.static_body = pm.Body()
@@ -394,7 +401,7 @@ class AngryBirdsGame:
 
     def post_solve_pig_wood(self,space, arbiter):
         """Collision between pig and wood"""
-        self.pigs_to_remove = []
+        pigs_to_remove = []
         if arbiter.total_impulse.length > 700:
             pig_shape, wood_shape = arbiter.shapes
             for pig in self.pigs:
@@ -402,8 +409,8 @@ class AngryBirdsGame:
                     pig.life -= 20
                     self.score += 10000
                     if pig.life <= 0:
-                        self.pigs_to_remove.append(pig)
-        for pig in self.pigs_to_remove:
+                        pigs_to_remove.append(pig)
+        for pig in pigs_to_remove:
             space.remove(pig.shape, pig.shape.body)
             self.pigs.remove(pig)
 
@@ -539,14 +546,15 @@ class AngryBirdsGame:
                 else:
                     pygame.draw.line(self.screen, (0, 0, 0), (self.sling_x, self.sling_y-8),
                                      (self.sling2_x, self.sling2_y-7), 5)
-
+            birds_to_remove = []
+            pigs_to_remove = []
             self.counter += 1
             # Draw birds
             for bird in self.birds:
                 if bird.shape.body.position.y < 0:
-                    self.birds_to_remove.append(bird)
+                    birds_to_remove.append(bird)
                 if bird.dead():
-                    self.birds_to_remove.append(bird)
+                    birds_to_remove.append(bird)
                 else:
                     bird.ageWhenStatic()
                 p = self.to_pygame(bird.shape.body.position)
@@ -563,14 +571,10 @@ class AngryBirdsGame:
                 self.counter = 0
                 self.restart_counter = False
             # Remove birds and pigs
-            for bird in self.birds_to_remove:
+            for bird in birds_to_remove:
                 self.space.remove(bird.shape, bird.shape.body)
                 self.birds.remove(bird)
-            for pig in self.pigs_to_remove:
-                self.space.remove(pig.shape, pig.shape.body)
-                self.pigs.remove(pig)
-            self.birds_to_remove = []
-            self.pigs_to_remove = []
+
             # Draw static lines
             for line in self.static_lines:
                 body = line.body
@@ -583,20 +587,21 @@ class AngryBirdsGame:
             # Draw pigs
             for pig in self.pigs:
                 i += 1
-                pig = pig.shape
-                if pig.body.position.y < 0:
-                    self.pigs_to_remove.append(pig)
-                if pig.body.position.x < 0 or pig.body.position.x >1200:
-                    print('uluau')
-                    self.pigs_to_remove.append(pig)
-                print(pig.body.position)
+                if pig.shape.body.position.y < 0:
+                    pigs_to_remove.append(pig)
+                if pig.shape.body.position.x < 0 or pig.shape.body.position.x >1200:
+                    pigs_to_remove.append(pig)
 
-                p = self.to_pygame(pig.body.position)
+                p = self.to_pygame(pig.shape.body.position)
                 x, y = p
                 x -= 22
                 y -= 20
                 self.screen.blit(self.pig_image, (x+7, y+4))
                 pygame.draw.circle(self.screen, self.BLUE, p, int(pig.radius), 2)
+            for pig in pigs_to_remove:
+                self.space.remove(pig.shape, pig.shape.body)
+                self.pigs.remove(pig)
+
             # Draw columns and Beams
             for column in self.columns:
                 column.draw_poly('columns', self.screen)
