@@ -3,13 +3,13 @@
 # RL algorithm according to the dynamics of the MDP.
 # Each trial will run for at most |maxIterations|.
 # Return the list of rewards that we get for each trial.
-def simulate(mdp, rl, numTrials=10, maxIterations=1000, verbose=False):
+def simulate(mdp, rl, numTrials=10, maxIterations=1000, verbose=False,show = False):
 
 
     totalRewards = []  # The rewards we get on each trial
     for trial in range(numTrials):
         state = mdp.startState()
-        if verbose: mdp.showState()
+        if show: mdp.showState()
         sequence = [state]
         totalDiscount = 1
         totalReward = 0
@@ -24,7 +24,7 @@ def simulate(mdp, rl, numTrials=10, maxIterations=1000, verbose=False):
             rl.incorporateFeedback(state, action, reward, newState)
             totalReward += totalDiscount * reward
             totalDiscount *= mdp.discount()
-            if verbose: mdp.showState()
+            if show: mdp.showState()
             state = newState
             if newState==None:
                 break
