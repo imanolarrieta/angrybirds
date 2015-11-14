@@ -82,6 +82,7 @@ class angryAgent:
             features.append((('pigpos+action', (round(xpig, -1), round(ypig, -1)), action), 1)) #This is an indicator of the position of each pig and the action to take
             features.append((('x+action', action), xpig)) #An indicator of the x coordinate and the action taken
             features.append((('y+action', action), ypig)) #An indicator of the y coordinate and the action taken
+            features.append((('xy+action', action), xpig * ypig)) #Since Q is linearly approximated, this allows for interaction effects between x and y (important for location)
 
         for poly in state.polys['features']:
             polyposition = poly[0]
