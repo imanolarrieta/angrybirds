@@ -10,6 +10,7 @@ from AngryBirds import AngryBirdsGame
 import math
 from abAPI import *
 from util import *
+import numpy as np
 
 def API_gamestate():
     # TODO
@@ -76,6 +77,7 @@ class angryAgent:
         angle = action[0]
         distance = action[1]
         # rounded pig position and action indicator features
+
         for pos in state.pigs['positions']:
             xpig = pos[0]
             ypig = pos[1]
@@ -89,20 +91,60 @@ class angryAgent:
             features.append((('polypos', (round(polyposition[0], -1), round(polyposition[1], -1)), action), 1)) #This is an indicator of the position of each polygon
         return features
 
+    def featureExtractor3(self, state, action, centroidFeatures = True):
+        """
+        Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
+        This is used for function approximation [ i.e. Q(s,a)= w * featureExtractor(s, a) ]
+        :param state: a gamestate (as would be passed to Q)
+        :param action: a action (as would be passed to Q)
+        :return: dictionary/counter that gives a (potentially sparse) feature vector
+        """
+        # Current GameState:
+        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
+        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
+        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
+        # self.score = game.getScore()
+
+        features = []
+        angle = action[0]
+        distance = action[1]
+        # rounded pig position and action indicator features
+        positions = sorted(state.pigs['positions'])
+        npigs = len(positions)
+        for i, pos in enumerate(positions):
+            xpig = pos[0]
+            ypig = pos[1]
+            features.append((('pigpos+action', (round(xpig, -1), round(ypig, -1)), action), 1)) #This is an indicator of the position of each pig and the action to take
+            features.append((('x+action'+i, action), xpig)) #An indicator of the x coordinate and the action taken
+            features.append((('y+action'+i, action), ypig)) #An indicator of the y coordinate and the action taken
+            features.append((('xy+action'+i, action), xpig * ypig)) #Since Q is linearly approximated, this allows for interaction effects between x and y (important for location)
+
+        if centroidFeatures:
+            meanx, meany = np.mean(positions, axis=0)
+            sigmax, sigmay = np.mean(ypositions, axis=0)
+            features.append(('centroid_x', action), meanx)
+            features.append(('centroid_y', action), meany)
+            features.append(('centroid_sigmax', action), sigmax)
+            features.append(('centroid_sigmay', action), sigmay)
+
+        for poly in state.polys['features']:
+            polyposition = poly[0]
+            features.append((('polypos', (round(polyposition[0], -1), round(polyposition[1], -1)), action), 1)) #This is an indicator of the position of each polygon
+        return features
 
     def getAction(self, state): return self.learner.getAction(state)
     def incorporateFeedback(self, state, action, reward, newState): return self.learner.incorporateFeedback(state, action, reward, newState)
 
 
 if __name__=='__main__':
-    ab = AngryBirdsMDP(level=3)
+    ab = AngryBirdsMDP(level=7)
     explorationProb = 0.3
     agent = angryAgent(explorationProb=explorationProb)
     RUN_FAST = False  # Set this to False to wait until state is steadied before taking new action (important for learning)
 
     rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=agent.featureExtractor,discount=ab.discount(),\
                             explorationProb=explorationProb)
-    simulate(ab,rl,numTrials=20, maxIterations=1000, verbose=True, show=False)
+    simulate(ab,rl,numTrials=20, maxIterations=1000, verbose=True, show=True)
 
 
 

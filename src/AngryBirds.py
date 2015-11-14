@@ -12,6 +12,10 @@ from level import Level
 class AngryBirdsGame:
     show = False
 
+    def getMaxScore(self):
+        max_score = 10000*len(self.level.pigs) + 10000*len(self.level.number_of_birds-1) + 5000*(len(self.level.beams) + len(self.level.columns))
+        return max_score
+
     def getScore(self):
         return self.score
 
