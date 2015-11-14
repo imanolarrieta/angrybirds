@@ -18,9 +18,10 @@ import AngryBirds
 class AngryBirdsMDP:
 
     # Initializes the game
-    def __init__(self):
+    def __init__(self,level = -1):
         self.game = AngryBirds.AngryBirdsGame()
-        self.show=True
+        self.show=False
+        self.level = level
 
     def showLearning(self):
         self.show = True
@@ -35,6 +36,8 @@ class AngryBirdsMDP:
     def startState(self):
         # TODO Initialize with different levels
         self.game = AngryBirds.AngryBirdsGame()
+        if self.level>-1:
+            self.game.startAtLevel(self.level)
         return GameState(self.game)
 
     # Return set of actions possible from |state|.
@@ -52,10 +55,14 @@ class AngryBirdsMDP:
 
         if state.isEnd():
             if state.isWin():
-                self.game.startNewLevel()
-                return (GameState(self.game),self.game.getScore())
+                if self.level==-1:
+                    self.game.startNewLevel()
+                    return (GameState(self.game),0)
+                else:
+                    self.game.restartGame()
+                    return (GameState(self.game),0)
             else:
-                return (None,-1000)
+                return (None,-10000)
 
         pastscore = self.game.getScore()
         angle = action[0]
@@ -96,6 +103,7 @@ class GameState():
         self.nbirds = game.getNumberRemainingBirds()
         self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
         self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
+        self.level = game.getLevel()
 
     def isEnd(self):
         return self.nbirds==0 or self.pigs['number']==0
@@ -105,6 +113,11 @@ class GameState():
 
     def isLoose(self):
         return self.nbirds==0
+
+    def getLevel(self):
+        return self.level
+
+
 
 
 

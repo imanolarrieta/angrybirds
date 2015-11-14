@@ -92,6 +92,7 @@ class AngryBirdsGame:
     def humanPlay(self):
         #Allows a human player to play the game
         self.show = True
+        self.humanPlaying = True
         while self.running:
             self.run()
 
@@ -120,6 +121,19 @@ class AngryBirdsGame:
         self.score = 0
         self.bird_path = []
         self.bonus_score_once = True
+
+    def startAtLevel(self,level):
+        self.restart()
+        self.level.number=level
+        self.game_state = 0
+        self.level.load_level()
+        self.score = 0
+        self.bird_path = []
+        self.bonus_score_once = True
+
+    def getLevel(self):
+        return self.level.number
+
 
 
     def __init__(self):
@@ -160,6 +174,7 @@ class AngryBirdsGame:
         self.play_button = self.buttons.subsurface(rect).copy()
         self.clock = pygame.time.Clock()
         self.running = True
+        self.humanPlaying =False
 
         # the base of the physics
         self.space = pm.Space()
@@ -424,11 +439,12 @@ class AngryBirdsGame:
                         self.t1 = time.time()*1000
                         xo = 154
                         yo = 156
-                        if self.x_mouse < self.sling_x+5:
+                        if self.x_mouse < self.sling_x+5 and self.humanPlaying:
                             bird = Bird(self.mouse_distance, self.angle, xo, yo, self.space)
                             self.birds.append(bird)
                         else:
                             bird = Bird(-self.mouse_distance, self.angle, xo, yo, self.space)
+
                             self.birds.append(bird)
                         if self.level.number_of_birds == 0:
                             self.t2 = time.time()
@@ -473,7 +489,7 @@ class AngryBirdsGame:
                             self.mouse_distance = self.rope_lenght
 
                         # Bird is initiated with power ~ distance, angle, x, y, space):
-                        if self.x_mouse < self.sling_x+5:
+                        if self.x_mouse < self.sling_x+5 and self.humanPlaying:
                             bird = Bird(self.mouse_distance, self.angle, xo, yo, self.space)
                             self.birds.append(bird)
                         else:
@@ -548,7 +564,28 @@ class AngryBirdsGame:
                                      (self.sling2_x, self.sling2_y-7), 5)
             birds_to_remove = []
             pigs_to_remove = []
+            columns_to_remove = []
+            beams_to_remove=[]
             self.counter += 1
+            #Remove polygons that went out of the screen:
+            for column in self.columns:
+                column_y = column.shape.body.position.y
+                column_x = column.shape.body.position.x
+                if column_y<0 or column_x<0 or column_x>1200:
+                    columns_to_remove.append(column)
+            for beam in self.beams:
+                beam_y = beam.shape.body.position.y
+                beam_x = beam.shape.body.position.x
+                if beam_y<0 or beam_x<0 or beam_x>1200:
+                    beams_to_remove.append(beam)
+            for column in columns_to_remove:
+                self.space.remove(column.shape, column.shape.body)
+                self.columns.remove(column)
+
+            for beam in beams_to_remove:
+                self.space.remove(beam.shape, beam.shape.body)
+                self.beams.remove(beam)
+
             # Draw birds
             for bird in self.birds:
                 if bird.shape.body.position.y < 0:
@@ -637,8 +674,8 @@ class AngryBirdsGame:
 
 if __name__=='__main__':
     ab = AngryBirdsGame()
-    ab.runFrames(50,show=True)
-    ab.performAction(-0.3,-70.9)
-    ab.runUntilStatic(show=True)
+    # ab.runFrames(50,show=True)
+    # ab.performAction(-0.3,-70.9)
+    # ab.runUntilStatic(show=True)
     # print('Now in human play')
-    # ab.humanPlay()
+    ab.humanPlay()

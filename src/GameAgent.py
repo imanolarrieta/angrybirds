@@ -94,13 +94,15 @@ class angryAgent:
 
 
 if __name__=='__main__':
-    ab = AngryBirdsMDP()
-    agent = angryAgent(explorationProb=0.3)
+    ab = AngryBirdsMDP(level=3)
+    explorationProb = 0.3
+    agent = angryAgent(explorationProb=explorationProb)
     RUN_FAST = False  # Set this to False to wait until state is steadied before taking new action (important for learning)
 
     rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=agent.featureExtractor,discount=ab.discount(),\
-                            explorationProb=0.3)
-    simulate(ab,rl,numTrials=20, maxIterations=1000, verbose=True, show=True)
+                            explorationProb=explorationProb)
+    simulate(ab,rl,numTrials=20, maxIterations=1000, verbose=True, show=False)
+
 
 
     # # Learn Loop, baby!
