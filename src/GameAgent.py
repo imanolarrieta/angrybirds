@@ -115,17 +115,17 @@ class angryAgent:
             xpig = pos[0]
             ypig = pos[1]
             features.append((('pigpos+action', (round(xpig, -1), round(ypig, -1)), action), 1)) #This is an indicator of the position of each pig and the action to take
-            features.append((('x+action'+i, action), xpig)) #An indicator of the x coordinate and the action taken
-            features.append((('y+action'+i, action), ypig)) #An indicator of the y coordinate and the action taken
-            features.append((('xy+action'+i, action), xpig * ypig)) #Since Q is linearly approximated, this allows for interaction effects between x and y (important for location)
+            features.append((('x+action'+str(i), action), xpig)) #An indicator of the x coordinate and the action taken
+            features.append((('y+action'+str(i), action), ypig)) #An indicator of the y coordinate and the action taken
+            features.append((('xy+action'+str(i), action), xpig * ypig)) #Since Q is linearly approximated, this allows for interaction effects between x and y (important for location)
 
-        if centroidFeatures:
+        if centroidFeatures and npigs>0:
             meanx, meany = np.mean(positions, axis=0)
-            sigmax, sigmay = np.mean(ypositions, axis=0)
-            features.append(('centroid_x', action), meanx)
-            features.append(('centroid_y', action), meany)
-            features.append(('centroid_sigmax', action), sigmax)
-            features.append(('centroid_sigmay', action), sigmay)
+            sigmax, sigmay = np.mean(positions, axis=0)
+            features.append((('centroid_x', action), meanx))
+            features.append((('centroid_y', action), meany))
+            features.append((('centroid_sigmax', action), sigmax))
+            features.append((('centroid_sigmay', action), sigmay))
 
         for poly in state.polys['features']:
             polyposition = poly[0]
