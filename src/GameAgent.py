@@ -37,7 +37,7 @@ class angryAgent:
         allowedDistances = range(20, 90+1, 20)
         return [(a, d) for a in allowedAngles for d in allowedDistances]
 
-    def featureExtractor(self, state, action):
+    def featureExtractorXYaction(self, state, action):
         """
         Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
         This is used for function approximation [ i.e. Q(s,a)= w * featureExtractor(s, a) ]
@@ -59,39 +59,7 @@ class angryAgent:
             features.append((('pigpos', (round(xpig, -1), round(ypig, -1)), action), 1))
         return features
 
-    def featureExtractor2(self, state, action):
-        """
-        Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
-        This is used for function approximation [ i.e. Q(s,a)= w * featureExtractor(s, a) ]
-        :param state: a gamestate (as would be passed to Q)
-        :param action: a action (as would be passed to Q)
-        :return: dictionary/counter that gives a (potentially sparse) feature vector
-        """
-        # Current GameState:
-        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
-        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
-        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
-        # self.score = game.getScore()
-
-        features = []
-        angle = action[0]
-        distance = action[1]
-        # rounded pig position and action indicator features
-
-        for pos in state.pigs['positions']:
-            xpig = pos[0]
-            ypig = pos[1]
-            features.append((('pigpos+action', (round(xpig, -1), round(ypig, -1)), action), 1)) #This is an indicator of the position of each pig and the action to take
-            features.append((('x+action', action), xpig)) #An indicator of the x coordinate and the action taken
-            features.append((('y+action', action), ypig)) #An indicator of the y coordinate and the action taken
-            features.append((('xy+action', action), xpig * ypig)) #Since Q is linearly approximated, this allows for interaction effects between x and y (important for location)
-
-        for poly in state.polys['features']:
-            polyposition = poly[0]
-            features.append((('polypos', (round(polyposition[0], -1), round(polyposition[1], -1)), action), 1)) #This is an indicator of the position of each polygon
-        return features
-
-    def featureExtractor3(self, state, action, centroidFeatures = True):
+    def featureExtractorXpigYpig(self, state, action):
         """
         Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
         This is used for function approximation [ i.e. Q(s,a)= w * featureExtractor(s, a) ]
@@ -110,26 +78,83 @@ class angryAgent:
         distance = action[1]
         # rounded pig position and action indicator features
         positions = sorted(state.pigs['positions'])
-        npigs = len(positions)
-        for i, pos in enumerate(positions):
+        for pos in enumerate(positions):
             xpig = pos[0]
             ypig = pos[1]
-            features.append((('pigpos+action', (round(xpig, -1), round(ypig, -1)), action), 1)) #This is an indicator of the position of each pig and the action to take
             features.append((('x+action'+i, action), xpig)) #An indicator of the x coordinate and the action taken
             features.append((('y+action'+i, action), ypig)) #An indicator of the y coordinate and the action taken
             features.append((('xy+action'+i, action), xpig * ypig)) #Since Q is linearly approximated, this allows for interaction effects between x and y (important for location)
 
-        if centroidFeatures:
-            meanx, meany = np.mean(positions, axis=0)
-            sigmax, sigmay = np.mean(ypositions, axis=0)
-            features.append(('centroid_x', action), meanx)
-            features.append(('centroid_y', action), meany)
-            features.append(('centroid_sigmax', action), sigmax)
-            features.append(('centroid_sigmay', action), sigmay)
+        return features
+
+    def polyIndicatorFeatureExtractor(self, state, action):
+        """
+        Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
+        This is used for function approximation [ i.e. Q(s,a)= w * featureExtractor(s, a) ]
+        :param state: a gamestate (as would be passed to Q)
+        :param action: a action (as would be passed to Q)
+        :return: dictionary/counter that gives a (potentially sparse) feature vector
+        """
+        # Current GameState:
+        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
+        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
+        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
+        # self.score = game.getScore()
+
+        features = []
+        angle = action[0]
+        distance = action[1]
+        # rounded pig position and action indicator features
 
         for poly in state.polys['features']:
             polyposition = poly[0]
             features.append((('polypos', (round(polyposition[0], -1), round(polyposition[1], -1)), action), 1)) #This is an indicator of the position of each polygon
+        return features
+
+    def centroidFeatureExtractor(self, state, action):
+        """
+        Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
+        This is used for function approximation [ i.e. Q(s,a)= w * featureExtractor(s, a) ]
+        :param state: a gamestate (as would be passed to Q)
+        :param action: a action (as would be passed to Q)
+        :return: dictionary/counter that gives a (potentially sparse) feature vector
+        """
+        # Current GameState:
+        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
+        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
+        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
+        # self.score = game.getScore()
+
+        features = []
+
+        meanx, meany = np.mean(positions, axis=0)
+        sigmax, sigmay = np.mean(ypositions, axis=0)
+        features.append(('centroid_x', action), meanx)
+        features.append(('centroid_y', action), meany)
+        features.append(('centroid_sigmax', action), sigmax)
+        features.append(('centroid_sigmay', action), sigmay)
+
+        return features
+
+    def custom1FeatureExtractor(self, state, action):
+        """
+        Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
+        This is used for function approximation [ i.e. Q(s,a)= w * featureExtractor(s, a) ]
+        :param state: a gamestate (as would be passed to Q)
+        :param action: a action (as would be passed to Q)
+        :return: dictionary/counter that gives a (potentially sparse) feature vector
+        """
+        # Current GameState:
+        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
+        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
+        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
+        # self.score = game.getScore()
+
+        features = []
+        # rounded pig position and action indicator features
+        features += self.featureExtractorXYaction(state, action)
+        features += self.centroidFeatureExtractor(state, action)
+        features += self.featureExtractorXpigYpig(state, action)
         return features
 
     def getAction(self, state): return self.learner.getAction(state)
