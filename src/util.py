@@ -38,4 +38,4 @@ def simulate(mdp, rl, numTrials=10, maxIterations=1000, verbose=False,show = Fal
         levelsPassed.append(maxLevel)
         output['totalRewards'] = totalRewards
         output['levelsPassed'] = levelsPassed
-    return totalRewards
+    return output
