@@ -128,12 +128,13 @@ class angryAgent:
 
         features = []
         positions = sorted(state.pigs['positions'])
-        meanx, meany = np.mean(positions, axis=0)
-        sigmax, sigmay = np.mean(positions, axis=0)
-        features.append((('centroid_x', action), meanx))
-        features.append((('centroid_y', action), meany))
-        features.append((('centroid_sigmax', action), sigmax))
-        features.append((('centroid_sigmay', action), sigmay))
+        if len(positions) >0 :
+            meanx, meany = np.mean(positions, axis=0)
+            sigmax, sigmay = np.mean(positions, axis=0)
+            features.append((('centroid_x', action), meanx))
+            features.append((('centroid_y', action), meany))
+            features.append((('centroid_sigmax', action), sigmax))
+            features.append((('centroid_sigmay', action), sigmay))
 
         return features
 
