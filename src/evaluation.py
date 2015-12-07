@@ -12,7 +12,7 @@ if __name__ == '__main__':
     ab = AngryBirdsMDP()
     explorationProb = 0.3
     numTrials = 50
-    agent = angryAgent(explorationProb=explorationProb)
+    agent = angryAgent()
     featureExtractor =agent.custom1FeatureExtractor
 
     rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=featureExtractor,discount=ab.discount(),\
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     trainingOutcomes = simulate(ab,rl,numTrials=numTrials, maxIterations=1000, verbose=False, show=False)
 
     explorationProb = 0
-    agent = angryAgent(explorationProb=explorationProb)
+    agent = angryAgent()
     rl.setExplorationProb(explorationProb)
     testOutcomes = simulate(ab,rl,numTrials=5,verbose = False, show=False)
 
@@ -61,14 +61,14 @@ if __name__ == '__main__':
     ab = AngryBirdsMDP(level = 3)
     explorationProb = 0.3
     numTrials = 50
-    agent = angryAgent(explorationProb=explorationProb)
+    agent = angryAgent()
 
     rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=featureExtractor,discount=ab.discount(),\
                             explorationProb=explorationProb)
     trainingOutcomes = simulate(ab,rl,numTrials=numTrials, maxIterations=1000, verbose=False, show=False)
 
     explorationProb = 0
-    agent = angryAgent(explorationProb=explorationProb)
+    agent = angryAgent()
     rl.setExplorationProb(explorationProb)
     testOutcomes = simulate(ab,rl,numTrials=5,verbose = False, show=False)
 
@@ -90,14 +90,14 @@ if __name__ == '__main__':
     ab = AngryBirdsMDP(level = 5)
     explorationProb = 0.3
     numTrials = 50
-    agent = angryAgent(explorationProb=explorationProb)
+    agent = angryAgent()
 
     rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=featureExtractor,discount=ab.discount(),\
                             explorationProb=explorationProb)
     trainingOutcomes = simulate(ab,rl,numTrials=numTrials, maxIterations=1000, verbose=False, show=False)
 
     explorationProb = 0
-    agent = angryAgent(explorationProb=explorationProb)
+    agent = angryAgent()
     rl.setExplorationProb(explorationProb)
     testOutcomes = simulate(ab,rl,numTrials=5,verbose = False, show=False)
 
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     ab = AngryBirdsMDP(level = 7)
     explorationProb = 0.3
     numTrials = 50
-    agent = angryAgent(explorationProb=explorationProb)
+    agent = angryAgent()
 
     rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=featureExtractor,discount=ab.discount(),\
                             explorationProb=explorationProb)
@@ -127,7 +127,7 @@ if __name__ == '__main__':
 
     explorationProb = 0
     ab = AngryBirdsMDP(level = 7)
-    agent = angryAgent(explorationProb=explorationProb)
+    agent = angryAgent()
     rl.setExplorationProb(explorationProb)
     testOutcomes = simulate(ab,rl,numTrials=5,verbose = False  , show=False)
 
