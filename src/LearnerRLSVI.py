@@ -142,7 +142,7 @@ class RLSVI_wrapper:
         self.actions = actions
         self.featureExtractor = featureExtractor
         self.currentEp = 0
-        self.maxNFeatures = 500
+        self.maxNFeatures = 1000
         self.featurePos = {} # super hacky dictionary: here we store the vector position that any given feature is stored in.
         # Note that this needs to be constant across timesteps, so the dictionary needs to persist.
         self.nFeaturesSeen = 0
