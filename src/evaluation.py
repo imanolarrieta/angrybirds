@@ -13,7 +13,7 @@ if __name__ == '__main__':
     explorationProb = 0.3
     numTrials = 50
     agent = angryAgent(explorationProb=explorationProb)
-    featureExtractor =agent.custom1FeatureExtractor
+    featureExtractor =agent.centroidFeatureExtractor
 
     rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=featureExtractor,discount=ab.discount(),\
                             explorationProb=explorationProb)
