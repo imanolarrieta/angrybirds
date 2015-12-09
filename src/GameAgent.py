@@ -157,7 +157,7 @@ class angryAgent:
 
 
         offset = width/2 if shifted else 0
-        if count:
+        if not count:
             presence = {}
             for i, pos in enumerate(positions):
                 squarex = math.floor((pos[0]+offset)/width)*width #This is the position

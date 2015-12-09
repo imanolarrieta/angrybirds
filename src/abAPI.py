@@ -62,7 +62,7 @@ class AngryBirdsMDP:
                     self.game.restartGame()
                     return (GameState(self.game),0)
             else:
-                return (None,-10000)
+                return (None,-50000)
 
         pastscore = self.game.getScore()
         angle = action[0]
