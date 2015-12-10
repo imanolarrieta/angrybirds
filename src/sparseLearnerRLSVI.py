@@ -118,7 +118,10 @@ class RLSVI:
             #Simulate gaussians assuming independence (i.e. taking only the diagonal terms in the covariance matrix)
             mu = np.array(self.thetaMeans[h].todense()).flatten()
             sig = np.sqrt(self.covs[h].diagonal())
-            self.thetaSamps[h] = sp.csc_matrix(mu + sig*np.random.normal(size=self.nFeat)).T
+            if self.epsilon == 0.0:
+                self.thetaSamps[h] = sp.csc_matrix(mu + sig*np.random.normal(size=self.nFeat)).T
+            else:
+                self.thetaSamps[h] = sp.csc_matrix(mu).T # If epsilon>0.0, do not sample (and use epsilon-greedy exploration)
 
 
     def pick_action(self, t, obs):
@@ -151,6 +154,8 @@ class RLSVI_wrapper:
     Wrapper class for Osband's RLVI implementation. Chiefly hacks a way around the tuple-based features used in our
     Q-Learner and game, creating rigid numpy-vector features. Additionally currently assumes that we are playing T episodes
     of length 1 timestep (i.e. we learn after every move and ignore episodes)
+    If epsilon > 0.0, this becomes LSVI, using unsampled least-squares estimates and using epsilon-greedy exploration.
+
     '''
     def __init__(self, actions, featureExtractor, epsilon=0.0, sigma=500.0):
         self.actions = actions
