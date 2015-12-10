@@ -20,7 +20,7 @@ class RLSVI:
     with history appended row by row.
     '''
     def __init__(self, nFeat, nAction, epLen,
-                 epsilon=0.0, sigma=1.0, lam=1.0, maxHist=int(1e4)):
+                 epsilon=0.0, sigma=1.0, lam=1.0, maxHist=1000):
         self.nFeat = nFeat
         self.nAction = nAction
         self.epLen = epLen
@@ -57,7 +57,7 @@ class RLSVI:
             NULL - update covs, update memory in place.
         '''
         if ep >= self.maxHist:
-            print('****** ERROR: Memory Exceeded ******')
+            print('****** ERROR: HISTORY Exceeded ******')
 
         # Covariance update
         u = oldObs / self.sigma
@@ -76,6 +76,8 @@ class RLSVI:
            and len(self.memory[h]['rewards']) == len(self.memory[h]['newFeat']):
             pass
         else:
+            print('oldfeat', self.memory[h]['oldFeat'], 'rewards', self.memory[h]['rewards'],'newfeat', self.memory[h]['newFeat'])
+            print(len(self.memory[h]['oldFeat']),len(self.memory[h]['rewards']), len(self.memory[h]['newFeat']))
             print('****** ERROR: Memory Failure ******')
 
     def update_policy(self, ep):
