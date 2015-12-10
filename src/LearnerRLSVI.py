@@ -139,7 +139,7 @@ class RLSVI_wrapper:
     Q-Learner and game, creating rigid numpy-vector features. Additionally currently assumes that we are playing T episodes
     of length 1 timestep (i.e. we learn after every move and ignore episodes)
     '''
-    def __init__(self, actions, featureExtractor, epsilon=0.0):
+    def __init__(self, actions, featureExtractor, epsilon=0.0, sigma=10000.0):
         self.actions = actions
         self.featureExtractor = featureExtractor
         self.currentEp = 0
@@ -147,7 +147,7 @@ class RLSVI_wrapper:
         self.featurePos = {} # super hacky dictionary: here we store the vector position that any given feature is stored in.
         # Note that this needs to be constant across timesteps, so the dictionary needs to persist.
         self.nFeaturesSeen = 0
-        self.rlsvi = RLSVI(self.maxNFeatures, len(actions(0)), epLen=1, epsilon=epsilon)
+        self.rlsvi = RLSVI(self.maxNFeatures, len(actions(0)), epLen=1, epsilon=epsilon, sigma=sigma)
         #TODO Note: this is not robust. Calling actions(state=0) works when state is ignored, but will WAT otherwise.
 
     def getObsVect(self, state, action=None):
