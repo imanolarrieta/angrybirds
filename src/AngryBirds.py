@@ -575,12 +575,12 @@ class AngryBirdsGame:
             for column in self.columns:
                 column_y = column.shape.body.position.y
                 column_x = column.shape.body.position.x
-                if column_y<0 or column_x<0 or column_x>1200:
+                if column_y<.01 or column_x<.01 or column_x>1200 or column_y>650:
                     columns_to_remove.append(column)
             for beam in self.beams:
                 beam_y = beam.shape.body.position.y
                 beam_x = beam.shape.body.position.x
-                if beam_y<0 or beam_x<0 or beam_x>1200:
+                if beam_y<.01 or beam_x<.01 or beam_x>1200 or beam_y>650:
                     beams_to_remove.append(beam)
             for column in columns_to_remove:
                 self.space.remove(column.shape, column.shape.body)

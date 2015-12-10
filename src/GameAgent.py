@@ -147,7 +147,7 @@ class angryAgent:
         # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
         # self.score = game.getScore()
 
-        width = size*28 #This is |size| times the diameter of a pig
+        width = size*28.0 #This is |size| times the diameter of a pig
         features = []
         # rounded pig position and action indicator features
         if type=='pig':
@@ -156,19 +156,25 @@ class angryAgent:
             positions = [poly[0] for poly in state.polys['features']]
 
 
-        offset = width/2 if shifted else 0
+        offset = width/2 if shifted else 0.0
         if not count:
             presence = {}
             for i, pos in enumerate(positions):
-                squarex = math.floor((pos[0]+offset)/width)*width #This is the position
-                squarey = math.floor((pos[1]+offset)/width)*width
-                presence[(squarex, squarey)] = 1
+                try:
+                    squarex = math.floor((pos[0]+offset)/width)*width #This is the position
+                    squarey = math.floor((pos[1]+offset)/width)*width
+                    presence[(squarex, squarey)] = 1
+                except ValueError:
+                    continue
         else:
             presence = Counter()
             for i, pos in enumerate(positions):
-                squarex = math.floor((pos[0]+offset)/width)*width #This is the position
-                squarey = math.floor((pos[1]+offset)/width)*width
-                presence[(squarex, squarey)] += 1
+                try:
+                    squarex = math.floor((pos[0]+offset)/width)*width #This is the position
+                    squarey = math.floor((pos[1]+offset)/width)*width
+                    presence[(squarex, squarey)] += 1
+                except ValueError:
+                    continue
 
         s = '_shifted_' if shifted else '_'
         c = 'count_' if count else 'indicator_'
