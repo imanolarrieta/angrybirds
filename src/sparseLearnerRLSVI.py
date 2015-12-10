@@ -26,7 +26,7 @@ class RLSVI:
     with history appended row by row.
     '''
     def __init__(self, nFeat, nAction, epLen,
-                 epsilon=0.0, sigma=1.0, lam=1.0, maxHist=1000):
+                 epsilon=0.0, sigma=1.0, lam=1.0, maxHist=5000):
         self.nFeat = nFeat
         self.nAction = nAction
         self.epLen = epLen
@@ -78,12 +78,10 @@ class RLSVI:
         self.memory[h]['rewards'][ep] = reward
         self.memory[h]['newFeat'][ep] = newObs.T # TODO LR added the ".T", is this correct?!
 
-        if len(self.memory[h]['oldFeat']) == len(self.memory[h]['rewards']) \
-           and len(self.memory[h]['rewards']) == len(self.memory[h]['newFeat']):
+        if self.memory[h]['oldFeat']._shape[0] == self.memory[h]['rewards']._shape[0] \
+           and self.memory[h]['rewards']._shape[0] == len(self.memory[h]['newFeat']):
             pass
         else:
-            print('oldfeat', self.memory[h]['oldFeat'], 'rewards', self.memory[h]['rewards'],'newfeat', self.memory[h]['newFeat'])
-            print(len(self.memory[h]['oldFeat']),len(self.memory[h]['rewards']), len(self.memory[h]['newFeat']))
             print('****** ERROR: Memory Failure ******')
 
     def update_policy(self, ep):
