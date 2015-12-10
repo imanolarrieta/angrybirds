@@ -14,7 +14,7 @@ import copy
 # RL algorithm according to the dynamics of the MDP.
 # Each trial will run for at most |maxIterations|.
 # Return the list of rewards that we get for each trial.
-def simulate(mdp, rl, numTrials=10, maxIterations=1000, verbose=False,show = False, episodicLearning=True):
+def simulate(mdp, rl, numTrials=10, maxIterations=1000, verbose=False,show = False, episodicLearning=False):
 
     output = {}
     totalRewards = []  # The rewards we get on each trial
