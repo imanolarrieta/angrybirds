@@ -16,7 +16,7 @@ class QLearningAlgorithm():
         self.actions = actions
         self.discount = discount
         self.featureExtractor = featureExtractor
-        self.explorationProb = explorationProb
+        self.explorationProb = epsilon
         self.weights = collections.Counter()
         self.numIters = 0
 
