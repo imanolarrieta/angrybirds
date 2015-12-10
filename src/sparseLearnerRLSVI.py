@@ -167,6 +167,15 @@ class RLSVI_wrapper:
         self.rlsvi = RLSVI(self.maxNFeatures, len(actions(0)), epLen=1, epsilon=epsilon, sigma=sigma)
         #TODO Note: this is not robust. Calling actions(state=0) works when state is ignored, but will WAT otherwise.
 
+    def makeLSVI(self, epsilon):
+        self.rlsvi.isRLSVI = False
+        self.rlsvi.epsilon = epsilon
+
+    def makeRLSVI(self):
+        self.rlsvi.isRLSVI = True
+        self.rlsvi.epsilon = 0.0
+
+
     def getObsVect(self, state, action=None):
         '''
         Helper function that converts the more flexible tuple-syntax for features into the more rigid, linear-algebra
