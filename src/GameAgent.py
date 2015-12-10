@@ -259,5 +259,6 @@ if __name__=='__main__':
     # rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=agent.nestedGridFeatureExtractor,discount=ab.discount(),\
     #                         explorationProb=explorationProb)
     rl = RLSVI_wrapper(actions=agent.getAngryBirdsActions,featureExtractor=agent.nestedGridFeatureExtractor)
-    simulate(ab,rl,numTrials=20, maxIterations=1000, verbose=True, show=False)
+    simulate(ab,rl,numTrials=20, maxIterations=1000, verbose=True, show=False, episodicLearning=True)
+
 

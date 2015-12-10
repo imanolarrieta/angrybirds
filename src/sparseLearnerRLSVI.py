@@ -5,7 +5,7 @@ original author: Ian Osband, iosband@stanford.edu
 On the algorithm: http://arxiv.org/abs/1402.0635
 
 Adapted (wrapper structure) by Lars Roemheld, roemheld@stanford.edu
-Changed to sparse matrices by Bernardo Ramos
+Changed to sparse matrices by Bernardo Ramos, bramos@stanford.edu
 '''
 import scipy.sparse as sp
 import numpy as np
@@ -103,7 +103,7 @@ class RLSVI:
             A = self.memory[h]['oldFeat'].tocsc()[0:ep,:]
             nextPhi = {j:self.memory[h]['newFeat'][j] for j in range(ep)}
             nextQ = {j: nextPhi[j]*self.thetaSamps[h + 1] for j in range(ep)}
-            maxQ = sp.csc_matrix([next.tocsr().max(axis=0).toarray()[0][0] for j, next in nextQ.iteritems()]).T
+            maxQ = sp.csc_matrix([nextQ[j].tocsr().max(axis=0).toarray()[0][0] for j in nextQ]).T
             b = self.memory[h]['rewards'][0:ep] + maxQ
             self.thetaMeans[h] = \
                 self.covs[h]*A.T*b / (self.sigma ** 2)
@@ -248,7 +248,7 @@ class eLSVI(RLSVI):
             A = self.memory[h]['oldFeat'].tocsc()[0:ep,:]
             nextPhi = {j:self.memory[h]['newFeat'][j] for j in range(ep)}
             nextQ = {j: nextPhi[j]*self.thetaSamps[h + 1] for j in range(ep)}
-            maxQ = sp.csc_matrix([next.tocsr().max(axis=0).toarray()[0][0] for j, next in nextQ.iteritems()]).T
+            maxQ = sp.csc_matrix([nextQ.tocsr().max(axis=0).toarray()[0][0] for j in nextQ]).T
             b = self.memory[h]['rewards'][0:ep] + maxQ
             self.thetaMeans[h] = \
                 self.covs[h]*A.T*b / (self.sigma ** 2)
