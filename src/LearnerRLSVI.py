@@ -9,6 +9,7 @@ Adapted (wrapper structure) by Lars Roemheld, roemheld@stanford.edu
 
 import numpy as np
 
+
 class RLSVI:
     '''
     RLSVI agent
@@ -24,7 +25,7 @@ class RLSVI:
     with history appended row by row.
     '''
     def __init__(self, nFeat, nAction, epLen,
-                 epsilon=0.0, sigma=1.0, lam=1.0, maxHist=1e6):
+                 epsilon=0.0, sigma=1.0, lam=1.0, maxHist=1e4):
         self.nFeat = nFeat
         self.nAction = nAction
         self.epLen = epLen
@@ -142,7 +143,7 @@ class RLSVI_wrapper:
         self.actions = actions
         self.featureExtractor = featureExtractor
         self.currentEp = 0
-        self.maxNFeatures = 1000
+        self.maxNFeatures = 2000
         self.featurePos = {} # super hacky dictionary: here we store the vector position that any given feature is stored in.
         # Note that this needs to be constant across timesteps, so the dictionary needs to persist.
         self.nFeaturesSeen = 0
@@ -170,7 +171,7 @@ class RLSVI_wrapper:
                     assert self.nFeaturesSeen < self.maxNFeatures, 'RLVI maxNFeatures is too small for actual features produced'
                     self.featurePos[f[0]] = self.nFeaturesSeen
                     p = self.nFeaturesSeen
-                print(self.nFeaturesSeen)
+                # print(self.nFeaturesSeen)
                 obsVect[i][p] = f[1]
         return obsVect
 
