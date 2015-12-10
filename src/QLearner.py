@@ -12,7 +12,7 @@ class QLearningAlgorithm():
     featureExtractor: a function that takes a state and action and returns a list of (feature name, feature value) pairs.
     explorationProb: the epsilon value indicating how frequently the policy returns a random action
     """
-    def __init__(self, actions, discount, featureExtractor, explorationProb=0.2):
+    def __init__(self, actions, featureExtractor,discount=1.0, epsilon=0.3):
         self.actions = actions
         self.discount = discount
         self.featureExtractor = featureExtractor
