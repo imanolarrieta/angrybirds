@@ -33,6 +33,7 @@ class RLSVI:
         self.epsilon = epsilon
         self.sigma = sigma
         self.maxHist = maxHist
+        self.isRLSVI = (epsilon == 0.0) # sample from belief only if epsilon is 0. Setting this here allows epsilon to be changed later (to stop LSVI from exploring further)
 
         # Make the computation structures
         self.covs = []
@@ -116,7 +117,7 @@ class RLSVI:
             #Simulate gaussians assuming independence (i.e. taking only the diagonal terms in the covariance matrix)
             mu = np.array(self.thetaMeans[h].todense()).flatten()
             sig = np.sqrt(self.covs[h].diagonal())
-            if self.epsilon == 0.0:
+            if self.isRLSVI:
                 self.thetaSamps[h] = sp.csc_matrix(mu + sig*np.random.normal(size=self.nFeat)).T
             else:
                 self.thetaSamps[h] = sp.csc_matrix(mu).T # If epsilon>0.0, do not sample (and use epsilon-greedy exploration)
