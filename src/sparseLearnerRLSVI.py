@@ -1,6 +1,12 @@
-__author__ = 'bern'
+'''
+Simple implementation of RLSVI agent.
 
+original author: Ian Osband, iosband@stanford.edu
+On the algorithm: http://arxiv.org/abs/1402.0635
 
+Adapted (wrapper structure) by Lars Roemheld, roemheld@stanford.edu
+Changed to sparse matrices by Bernardo Ramos
+'''
 import scipy.sparse as sp
 import numpy as np
 import random
