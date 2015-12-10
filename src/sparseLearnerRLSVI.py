@@ -1,6 +1,12 @@
-__author__ = 'bern'
+'''
+Simple implementation of RLSVI agent.
 
+original author: Ian Osband, iosband@stanford.edu
+On the algorithm: http://arxiv.org/abs/1402.0635
 
+Adapted (wrapper structure) by Lars Roemheld, roemheld@stanford.edu
+Changed to sparse matrices by Bernardo Ramos
+'''
 import scipy.sparse as sp
 import numpy as np
 import random
@@ -20,7 +26,7 @@ class RLSVI:
     with history appended row by row.
     '''
     def __init__(self, nFeat, nAction, epLen,
-                 epsilon=0.0, sigma=1.0, lam=1.0, maxHist=int(1e4)):
+                 epsilon=0.0, sigma=1.0, lam=1.0, maxHist=1000):
         self.nFeat = nFeat
         self.nAction = nAction
         self.epLen = epLen
@@ -57,7 +63,7 @@ class RLSVI:
             NULL - update covs, update memory in place.
         '''
         if ep >= self.maxHist:
-            print('****** ERROR: Memory Exceeded ******')
+            print('****** ERROR: HISTORY Exceeded ******')
 
         # Covariance update
         u = oldObs / self.sigma
@@ -76,6 +82,8 @@ class RLSVI:
            and len(self.memory[h]['rewards']) == len(self.memory[h]['newFeat']):
             pass
         else:
+            print('oldfeat', self.memory[h]['oldFeat'], 'rewards', self.memory[h]['rewards'],'newfeat', self.memory[h]['newFeat'])
+            print(len(self.memory[h]['oldFeat']),len(self.memory[h]['rewards']), len(self.memory[h]['newFeat']))
             print('****** ERROR: Memory Failure ******')
 
     def update_policy(self, ep):
@@ -110,7 +118,10 @@ class RLSVI:
             #Simulate gaussians assuming independence (i.e. taking only the diagonal terms in the covariance matrix)
             mu = np.array(self.thetaMeans[h].todense()).flatten()
             sig = np.sqrt(self.covs[h].diagonal())
-            self.thetaSamps[h] = sp.csc_matrix(mu + sig*np.random.normal(size=self.nFeat)).T
+            if self.epsilon == 0.0:
+                self.thetaSamps[h] = sp.csc_matrix(mu + sig*np.random.normal(size=self.nFeat)).T
+            else:
+                self.thetaSamps[h] = sp.csc_matrix(mu).T # If epsilon>0.0, do not sample (and use epsilon-greedy exploration)
 
 
     def pick_action(self, t, obs):
@@ -143,6 +154,8 @@ class RLSVI_wrapper:
     Wrapper class for Osband's RLVI implementation. Chiefly hacks a way around the tuple-based features used in our
     Q-Learner and game, creating rigid numpy-vector features. Additionally currently assumes that we are playing T episodes
     of length 1 timestep (i.e. we learn after every move and ignore episodes)
+    If epsilon > 0.0, this becomes LSVI, using unsampled least-squares estimates and using epsilon-greedy exploration.
+
     '''
     def __init__(self, actions, featureExtractor, epsilon=0.0, sigma=500.0):
         self.actions = actions
