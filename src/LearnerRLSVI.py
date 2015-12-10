@@ -9,6 +9,7 @@ Adapted (wrapper structure) by Lars Roemheld, roemheld@stanford.edu
 
 import numpy as np
 
+
 class RLSVI:
     '''
     RLSVI agent
@@ -24,7 +25,7 @@ class RLSVI:
     with history appended row by row.
     '''
     def __init__(self, nFeat, nAction, epLen,
-                 epsilon=0.0, sigma=1.0, lam=1.0, maxHist=1e6):
+                 epsilon=0.0, sigma=1.0, lam=1.0, maxHist=1e4):
         self.nFeat = nFeat
         self.nAction = nAction
         self.epLen = epLen
@@ -138,15 +139,15 @@ class RLSVI_wrapper:
     Q-Learner and game, creating rigid numpy-vector features. Additionally currently assumes that we are playing T episodes
     of length 1 timestep (i.e. we learn after every move and ignore episodes)
     '''
-    def __init__(self, actions, featureExtractor, epsilon=0.0):
+    def __init__(self, actions, featureExtractor, epsilon=0.0, sigma=10000.0):
         self.actions = actions
         self.featureExtractor = featureExtractor
         self.currentEp = 0
-        self.maxNFeatures = 500
+        self.maxNFeatures = 2000
         self.featurePos = {} # super hacky dictionary: here we store the vector position that any given feature is stored in.
         # Note that this needs to be constant across timesteps, so the dictionary needs to persist.
         self.nFeaturesSeen = 0
-        self.rlsvi = RLSVI(self.maxNFeatures, len(actions(0)), epLen=1, epsilon=epsilon)
+        self.rlsvi = RLSVI(self.maxNFeatures, len(actions(0)), epLen=1, epsilon=epsilon, sigma=sigma)
         #TODO Note: this is not robust. Calling actions(state=0) works when state is ignored, but will WAT otherwise.
 
     def getObsVect(self, state, action=None):
@@ -170,7 +171,7 @@ class RLSVI_wrapper:
                     assert self.nFeaturesSeen < self.maxNFeatures, 'RLSVI maxNFeatures is too small for actual features produced'
                     self.featurePos[f[0]] = self.nFeaturesSeen
                     p = self.nFeaturesSeen
-                print(self.nFeaturesSeen)
+                # print(self.nFeaturesSeen)
                 obsVect[i][p] = f[1]
         return obsVect
 

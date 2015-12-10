@@ -11,7 +11,9 @@ from AngryBirds import AngryBirdsGame
 import math
 from abAPI import *
 from util import *
+import math
 import numpy as np
+from collections import Counter
 
 class angryAgent:
     def getAngryBirdsActions(self, state):
@@ -131,6 +133,70 @@ class angryAgent:
 
         return features
 
+    def gridFeatureExtractor(self, state, action, size=3, shifted=False, type='pig', count=True):
+        """
+        Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
+        This is used for function approximation [ i.e. Q(s,a)= w * featureExtractor(s, a) ]
+        :param state: a gamestate (as would be passed to Q)
+        :param action: a action (as would be passed to Q)
+        :return: dictionary/counter that gives a (potentially sparse) feature vector
+        """
+        # Current GameState:
+        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
+        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
+        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
+        # self.score = game.getScore()
+
+        width = size*28 #This is |size| times the diameter of a pig
+        features = []
+        # rounded pig position and action indicator features
+        if type=='pig':
+            positions = sorted(state.pigs['positions'])
+        elif type=='poly':
+            positions = [poly[0] for poly in state.polys['features']]
+
+
+        offset = width/2 if shifted else 0
+        if not count:
+            presence = {}
+            for i, pos in enumerate(positions):
+                squarex = math.floor((pos[0]+offset)/width)*width #This is the position
+                squarey = math.floor((pos[1]+offset)/width)*width
+                presence[(squarex, squarey)] = 1
+        else:
+            presence = Counter()
+            for i, pos in enumerate(positions):
+                squarex = math.floor((pos[0]+offset)/width)*width #This is the position
+                squarey = math.floor((pos[1]+offset)/width)*width
+                presence[(squarex, squarey)] += 1
+
+        s = '_shifted_' if shifted else '_'
+        c = 'count_' if count else 'indicator_'
+        #Now add indicator functions to the features
+        for squarex, squarey in presence:
+            features.append(((c+type+'_gridwidth'+str(width)+''+s+'x'+str(squarex)+'_y'+str(squarey), action), presence[(squarex, squarey)])) #An indicator of the (x,y) coordinate and the action taken
+        return features
+
+    def nestedGridFeatureExtractor(self, state, action, minsize=2, shifted=False, type='pig', count=True):
+        """
+        Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
+        This is used for function approximation [ i.e. Q(s,a)= w * featureExtractor(s, a) ]
+        :param state: a gamestate (as would be passed to Q)
+        :param action: a action (as would be passed to Q)
+        :return: dictionary/counter that gives a (potentially sparse) feature vector
+        """
+        # Current GameState:
+        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
+        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
+        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
+        # self.score = game.getScore()
+        features = []
+        size = 10.5
+        while size > minsize:
+            features += self.gridFeatureExtractor(state, action, size=size, shifted=shifted, type=type, count=count)
+            size /= 2
+        return features
+
     def custom1FeatureExtractor(self, state, action):
         """
         Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
@@ -152,18 +218,40 @@ class angryAgent:
         features += self.featureExtractorXpigYpig(state, action)
         return features
 
+
+    def custom2FeatureExtractor(self, state, action):
+        """
+        Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
+        This is used for function approximation [ i.e. Q(s,a)= w * featureExtractor(s, a) ]
+        :param state: a gamestate (as would be passed to Q)
+        :param action: a action (as would be passed to Q)
+        :return: dictionary/counter that gives a (potentially sparse) feature vector
+        """
+        # Current GameState:
+        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
+        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
+        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
+        # self.score = game.getScore()
+
+        features = []
+        features += self.nestedGridFeatureExtractor(state, action, minsize=2, shifted=False, type='pig')
+        features += self.nestedGridFeatureExtractor(state, action, minsize=2, shifted=False, type='poly')
+        return features
+
+
+
     def getAction(self, state): return self.learner.getAction(state)
     def incorporateFeedback(self, state, action, reward, newState): return self.learner.incorporateFeedback(state, action, reward, newState)
 
 
 if __name__=='__main__':
-    ab = AngryBirdsMDP(level=7)
+    ab = AngryBirdsMDP()
     explorationProb = 0.3
     agent = angryAgent()
     RUN_FAST = False  # Set this to False to wait until state is steadied before taking new action (important for learning)
 
-    # rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=agent.featureExtractorXYaction,discount=ab.discount(),\
+    # rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=agent.nestedGridFeatureExtractor,discount=ab.discount(),\
     #                         explorationProb=explorationProb)
-    rl = RLSVI_wrapper(actions=agent.getAngryBirdsActions,featureExtractor=agent.featureExtractorXpigYpig)
+    rl = RLSVI_wrapper(actions=agent.getAngryBirdsActions,featureExtractor=agent.nestedGridFeatureExtractor)
     simulate(ab,rl,numTrials=20, maxIterations=1000, verbose=True, show=True)
 
