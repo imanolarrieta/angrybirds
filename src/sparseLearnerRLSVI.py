@@ -1,15 +1,9 @@
-'''
-Simple implementation of RLSVI agent.
+__author__ = 'bern'
 
-original author: Ian Osband, iosband@stanford.edu
-On the algorithm: http://arxiv.org/abs/1402.0635
 
-Adapted (wrapper structure) by Lars Roemheld, roemheld@stanford.edu
-'''
-
-import scipy.sparse
+import scipy.sparse as sp
 import numpy as np
-
+import random
 
 class RLSVI:
     '''
@@ -40,12 +34,12 @@ class RLSVI:
         self.thetaSamps = []
         self.memory = []
         for i in range(epLen + 1):
-            self.covs.append(np.identity(nFeat) / float(lam))
-            self.thetaMeans.append(np.zeros(nFeat))
-            self.thetaSamps.append(np.zeros(nFeat))
-            self.memory.append({'oldFeat': np.zeros([maxHist, nFeat]),
-                                'rewards': np.zeros(maxHist),
-                                'newFeat': np.zeros([maxHist, nAction, nFeat])})
+            self.covs.append(sp.identity(nFeat) / float(lam))
+            self.thetaMeans.append(sp.dok_matrix((nFeat,1)))
+            self.thetaSamps.append(sp.dok_matrix((nFeat,1)))
+            self.memory.append({'oldFeat': sp.dok_matrix((maxHist, nFeat)),
+                                'rewards': sp.dok_matrix((maxHist,1)),
+                                'newFeat': {j:sp.dok_matrix((nAction, nFeat)) for j in range(maxHist)}})
 
     def update_obs(self, ep, h, oldObs, reward, newObs):
         '''
@@ -68,15 +62,15 @@ class RLSVI:
         # Covariance update
         u = oldObs / self.sigma
         S = self.covs[h]
-        Su = np.dot(S, u)
-        temp = np.outer(Su, Su)
-        temp2 = np.dot(u.T, Su) # TODO LR added the ".T", is this correct?!
+        Su = S*u
+        temp = Su*(Su.T)
+        temp2 = (u.T*Su)[0,0] # TODO LR added the ".T", is this correct?!
         self.covs[h] = S - (temp / (1 + temp2))
 
         # Adding the memory
         self.memory[h]['oldFeat'][ep, :] = oldObs.T  # TODO LR added the ".T", is this correct?!
         self.memory[h]['rewards'][ep] = reward
-        self.memory[h]['newFeat'][ep, :, :] = newObs.T # TODO LR added the ".T", is this correct?!
+        self.memory[h]['newFeat'][ep] = newObs.T # TODO LR added the ".T", is this correct?!
 
         if len(self.memory[h]['oldFeat']) == len(self.memory[h]['rewards']) \
            and len(self.memory[h]['rewards']) == len(self.memory[h]['newFeat']):
@@ -96,24 +90,28 @@ class RLSVI:
         '''
         H = self.epLen
 
-        if len(self.memory[H - 1]['oldFeat']) == 0:
+        if len(self.memory[H - 1]['oldFeat']) == 0 or ep == 0:
             return
-
         for i in range(H):
             h = H - i - 1
-            A = self.memory[h]['oldFeat'][0:ep]
-            print('A',A)
-            nextPhi = self.memory[h]['newFeat'][0:ep, :, :]
-            nextQ = np.dot(nextPhi, self.thetaSamps[h + 1])
-            maxQ = nextQ.max(axis=1)
+            A = self.memory[h]['oldFeat'].tocsc()[0:ep,:]
+            nextPhi = {j:self.memory[h]['newFeat'][j] for j in range(ep)}
+            nextQ = {j: nextPhi[j]*self.thetaSamps[h + 1] for j in range(ep)}
+            maxQ = sp.csc_matrix([next.tocsr().max(axis=0).toarray()[0][0] for j, next in nextQ.iteritems()]).T
             b = self.memory[h]['rewards'][0:ep] + maxQ
-            print('self.covs[h]',self.covs[h].shape,'A.T',A.T.shape, 'b',b.shape)
             self.thetaMeans[h] = \
-                self.covs[h].dot(np.dot(A.T, b)) / (self.sigma ** 2)
-            print(self.thetaMeans[h].shape)
-            self.thetaSamps[h] = \
-                np.random.multivariate_normal(mean=self.thetaMeans[h],
-                                              cov=self.covs[h])
+                self.covs[h]*A.T*b / (self.sigma ** 2)
+
+            #(Commented code:) To sample from the normal distribution including covariances
+            # self.thetaSamps[h] = \
+            #     sp.csc_matrix(np.random.multivariate_normal(mean=np.array(self.thetaMeans[h].todense()).flatten(),
+            #                                   cov=self.covs[h].todense())).T
+
+            #Simulate gaussians assuming independence (i.e. taking only the diagonal terms in the covariance matrix)
+            mu = np.array(self.thetaMeans[h].todense()).flatten()
+            sig = np.sqrt(self.covs[h].diagonal())
+            self.thetaSamps[h] = sp.csc_matrix(mu + sig*np.random.normal(size=self.nFeat)).T
+
 
     def pick_action(self, t, obs):
         '''
@@ -131,10 +129,12 @@ class RLSVI:
         if np.random.rand() < self.epsilon:
             return np.random.randint(self.nAction)
         else:
-            qVals = np.dot(self.thetaSamps[t], obs.T)
-            if qVals.max()==0:
-                print('argmax',qVals.argmax())
-            return qVals.argmax()
+            qVals = obs*self.thetaSamps[t].tocoo()
+            if len(qVals.data)==0:
+                return np.random.randint(self.nAction)
+            else:
+                I = qVals.data.argmax()
+            return I
 
 #-------------------------------------------------------------------------------
 
@@ -144,11 +144,11 @@ class RLSVI_wrapper:
     Q-Learner and game, creating rigid numpy-vector features. Additionally currently assumes that we are playing T episodes
     of length 1 timestep (i.e. we learn after every move and ignore episodes)
     '''
-    def __init__(self, actions, featureExtractor, epsilon=0.0, sigma=3000.0):
+    def __init__(self, actions, featureExtractor, epsilon=0.0, sigma=500.0):
         self.actions = actions
         self.featureExtractor = featureExtractor
         self.currentEp = 0
-        self.maxNFeatures = 2000
+        self.maxNFeatures = 10000
         self.featurePos = {} # super hacky dictionary: here we store the vector position that any given feature is stored in.
         # Note that this needs to be constant across timesteps, so the dictionary needs to persist.
         self.nFeaturesSeen = 0
@@ -165,7 +165,7 @@ class RLSVI_wrapper:
         else:
             actions = [action]
 
-        obsVect = np.zeros((len(actions), self.maxNFeatures))
+        obsVect = sp.dok_matrix((len(actions), self.maxNFeatures))
 
         for (i, a) in enumerate(actions):
             feats = self.featureExtractor(state, a)
@@ -173,12 +173,10 @@ class RLSVI_wrapper:
                 p = self.featurePos.get(f[0]);
                 if p is None:
                     self.nFeaturesSeen += 1
-                    assert self.nFeaturesSeen < self.maxNFeatures, 'RLSVI maxNFeatures is too small for actual features produced'
+                    assert self.nFeaturesSeen < self.maxNFeatures, 'RLVI maxNFeatures is too small for actual features produced'
                     self.featurePos[f[0]] = self.nFeaturesSeen
                     p = self.nFeaturesSeen
-                print(self.nFeaturesSeen)
-                print(i,p,f[1])
-                obsVect[i][p] = f[1]
+                obsVect[i, p] = f[1]
         return obsVect
 
     def getAction(self, state):
@@ -236,15 +234,15 @@ class eLSVI(RLSVI):
 
         for i in range(H):
             h = H - i - 1
-            A = self.memory[h]['oldFeat'][0:ep]
-            nextPhi = self.memory[h]['newFeat'][0:ep, :, :]
-            nextQ = np.dot(nextPhi, self.thetaSamps[h + 1])
-            maxQ = nextQ.max(axis=1)
+            A = self.memory[h]['oldFeat'].tocsc()[0:ep,:]
+            nextPhi = {j:self.memory[h]['newFeat'][j] for j in range(ep)}
+            nextQ = {j: nextPhi[j]*self.thetaSamps[h + 1] for j in range(ep)}
+            maxQ = sp.csc_matrix([next.tocsr().max(axis=0).toarray()[0][0] for j, next in nextQ.iteritems()]).T
             b = self.memory[h]['rewards'][0:ep] + maxQ
-
             self.thetaMeans[h] = \
-                self.covs[h].dot(np.dot(A.T, b)) / (self.sigma ** 2)
+                self.covs[h]*A.T*b / (self.sigma ** 2)
             self.thetaSamps[h] = self.thetaMeans[h]
+
 #-------------------------------------------------------------------------------
 
 
