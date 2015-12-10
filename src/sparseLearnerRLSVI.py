@@ -33,6 +33,7 @@ class RLSVI:
         self.epsilon = epsilon
         self.sigma = sigma
         self.maxHist = maxHist
+        self.isRLSVI = (epsilon == 0.0) # sample from belief only if epsilon is 0. Setting this here allows epsilon to be changed later (to stop LSVI from exploring further)
 
         # Make the computation structures
         self.covs = []
@@ -116,7 +117,7 @@ class RLSVI:
             #Simulate gaussians assuming independence (i.e. taking only the diagonal terms in the covariance matrix)
             mu = np.array(self.thetaMeans[h].todense()).flatten()
             sig = np.sqrt(self.covs[h].diagonal())
-            if self.epsilon == 0.0:
+            if self.isRLSVI:
                 self.thetaSamps[h] = sp.csc_matrix(mu + sig*np.random.normal(size=self.nFeat)).T
             else:
                 self.thetaSamps[h] = sp.csc_matrix(mu).T # If epsilon>0.0, do not sample (and use epsilon-greedy exploration)
@@ -165,6 +166,15 @@ class RLSVI_wrapper:
         self.nFeaturesSeen = 0
         self.rlsvi = RLSVI(self.maxNFeatures, len(actions(0)), epLen=1, epsilon=epsilon, sigma=sigma)
         #TODO Note: this is not robust. Calling actions(state=0) works when state is ignored, but will WAT otherwise.
+
+    def makeLSVI(self, epsilon):
+        self.rlsvi.isRLSVI = False
+        self.rlsvi.epsilon = epsilon
+
+    def makeRLSVI(self):
+        self.rlsvi.isRLSVI = True
+        self.rlsvi.epsilon = 0.0
+
 
     def getObsVect(self, state, action=None):
         '''
@@ -217,45 +227,5 @@ class RLSVI_wrapper:
         self.rlsvi.update_obs(self.currentEp, 0, obsVect_old, reward, obsVect_new)
         self.rlsvi.update_policy(self.currentEp)
         self.currentEp += 1
-
-
-
-#-------------------------------------------------------------------------------
-class eLSVI(RLSVI):
-    '''
-    epsilon-greedy LSVI agent.
-
-    This is just RLSVI, but we don't use the noise!
-    '''
-
-    def update_policy(self, ep):
-        '''
-        Re-computes theta parameters via planning step.
-
-        Args:
-            ep - int - which episode are we on
-
-        Returns:
-            NULL - updates theta in place for policy
-        '''
-        H = self.epLen
-
-        if len(self.memory[H - 1]['oldFeat']) == 0:
-            return
-
-        for i in range(H):
-            h = H - i - 1
-            A = self.memory[h]['oldFeat'].tocsc()[0:ep,:]
-            nextPhi = {j:self.memory[h]['newFeat'][j] for j in range(ep)}
-            nextQ = {j: nextPhi[j]*self.thetaSamps[h + 1] for j in range(ep)}
-            maxQ = sp.csc_matrix([nextQ.tocsr().max(axis=0).toarray()[0][0] for j in nextQ]).T
-            b = self.memory[h]['rewards'][0:ep] + maxQ
-            self.thetaMeans[h] = \
-                self.covs[h]*A.T*b / (self.sigma ** 2)
-            self.thetaSamps[h] = self.thetaMeans[h]
-
-#-------------------------------------------------------------------------------
-
-
 
 
