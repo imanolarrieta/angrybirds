@@ -26,13 +26,14 @@ class RLSVI:
     with history appended row by row.
     '''
     def __init__(self, nFeat, nAction, epLen,
-                 epsilon=0.0, sigma=1.0, lam=1.0, maxHist=1000):
+                 epsilon=0.0, sigma=1.0, lam=1.0, maxHist=5000):
         self.nFeat = nFeat
         self.nAction = nAction
         self.epLen = epLen
         self.epsilon = epsilon
         self.sigma = sigma
         self.maxHist = maxHist
+        self.isRLSVI = (epsilon == 0.0) # sample from belief only if epsilon is 0. Setting this here allows epsilon to be changed later (to stop LSVI from exploring further)
 
         # Make the computation structures
         self.covs = []
@@ -78,12 +79,10 @@ class RLSVI:
         self.memory[h]['rewards'][ep] = reward
         self.memory[h]['newFeat'][ep] = newObs.T # TODO LR added the ".T", is this correct?!
 
-        if len(self.memory[h]['oldFeat']) == len(self.memory[h]['rewards']) \
-           and len(self.memory[h]['rewards']) == len(self.memory[h]['newFeat']):
+        if self.memory[h]['oldFeat']._shape[0] == self.memory[h]['rewards']._shape[0] \
+           and self.memory[h]['rewards']._shape[0] == len(self.memory[h]['newFeat']):
             pass
         else:
-            print('oldfeat', self.memory[h]['oldFeat'], 'rewards', self.memory[h]['rewards'],'newfeat', self.memory[h]['newFeat'])
-            print(len(self.memory[h]['oldFeat']),len(self.memory[h]['rewards']), len(self.memory[h]['newFeat']))
             print('****** ERROR: Memory Failure ******')
 
     def update_policy(self, ep):
@@ -118,7 +117,7 @@ class RLSVI:
             #Simulate gaussians assuming independence (i.e. taking only the diagonal terms in the covariance matrix)
             mu = np.array(self.thetaMeans[h].todense()).flatten()
             sig = np.sqrt(self.covs[h].diagonal())
-            if self.epsilon == 0.0:
+            if self.isRLSVI:
                 self.thetaSamps[h] = sp.csc_matrix(mu + sig*np.random.normal(size=self.nFeat)).T
             else:
                 self.thetaSamps[h] = sp.csc_matrix(mu).T # If epsilon>0.0, do not sample (and use epsilon-greedy exploration)
@@ -167,6 +166,15 @@ class RLSVI_wrapper:
         self.nFeaturesSeen = 0
         self.rlsvi = RLSVI(self.maxNFeatures, len(actions(0)), epLen=1, epsilon=epsilon, sigma=sigma)
         #TODO Note: this is not robust. Calling actions(state=0) works when state is ignored, but will WAT otherwise.
+
+    def makeLSVI(self, epsilon):
+        self.rlsvi.isRLSVI = False
+        self.rlsvi.epsilon = epsilon
+
+    def makeRLSVI(self):
+        self.rlsvi.isRLSVI = True
+        self.rlsvi.epsilon = 0.0
+
 
     def getObsVect(self, state, action=None):
         '''
