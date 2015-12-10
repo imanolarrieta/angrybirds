@@ -10,6 +10,7 @@ Adapted (wrapper structure) by Lars Roemheld, roemheld@stanford.edu
 import scipy.sparse
 import numpy as np
 
+
 class RLSVI:
     '''
     RLSVI agent
@@ -172,7 +173,7 @@ class RLSVI_wrapper:
                 p = self.featurePos.get(f[0]);
                 if p is None:
                     self.nFeaturesSeen += 1
-                    assert self.nFeaturesSeen < self.maxNFeatures, 'RLVI maxNFeatures is too small for actual features produced'
+                    assert self.nFeaturesSeen < self.maxNFeatures, 'RLSVI maxNFeatures is too small for actual features produced'
                     self.featurePos[f[0]] = self.nFeaturesSeen
                     p = self.nFeaturesSeen
                 print(self.nFeaturesSeen)
@@ -203,10 +204,6 @@ class RLSVI_wrapper:
 
         obsVect_old = self.getObsVect(state, action).T
         obsVect_new = self.getObsVect(newState).T
-        print('old')
-        print(obsVect_old.shape)
-        print('new')
-        print(obsVect_new.shape)
 
         self.rlsvi.update_obs(self.currentEp, 0, obsVect_old, reward, obsVect_new)
         self.rlsvi.update_policy(self.currentEp)

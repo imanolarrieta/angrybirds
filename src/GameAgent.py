@@ -195,7 +195,6 @@ class angryAgent:
         while size > minsize:
             features += self.gridFeatureExtractor(state, action, size=size, shifted=shifted, type=type, count=count)
             size /= 2
-        print 'features', features
         return features
 
     def custom1FeatureExtractor(self, state, action):
