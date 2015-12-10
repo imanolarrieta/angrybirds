@@ -16,7 +16,7 @@ import numpy as np
 from collections import Counter
 
 class angryAgent:
-    def getAngryBirdsActions(self, state):
+    def getAngryBirdsActions(self, state, multiple = 1.0):
         """
         returns a list of allowed actions given a game state. This is where discretization of the action space
         happens. Currently ignores given state, since all actions are always possible.
@@ -28,8 +28,8 @@ class angryAgent:
         """
         # Current setting: 45 options, given by 5 distances (=launch power) and 9 angles.
         # TODO: test if reducing number of distances and increasing angles helps performance (intuition)
-        allowedAngles = [x/10.0 * math.pi for x in range(5, 13, 1)] # 0.5pi (90deg upwards) to 1.25pi (45deg downwards)
-        allowedDistances = range(20, 90+1, 20)
+        allowedAngles = [x/10.0/multiple * math.pi for x in range(5*multiple, 13*multiple, 1)] # 0.5pi (90deg upwards) to 1.25pi (45deg downwards)
+        allowedDistances = range(20, 90+1, 20 * multiple)
         return [(a, d) for a in allowedAngles for d in allowedDistances]
 
     def featureExtractorXYaction(self, state, action):
