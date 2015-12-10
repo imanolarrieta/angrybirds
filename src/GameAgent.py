@@ -6,7 +6,7 @@
 
 # TODO just pretend API exists already
 from QLearner import QLearningAlgorithm
-from LearnerRLSVI import RLSVI_wrapper
+from sparseLearnerRLSVI import RLSVI_wrapper
 from AngryBirds import AngryBirdsGame
 import math
 from abAPI import *
