@@ -30,9 +30,9 @@ def evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,numFeat = 64,numTria
     if nameAlg == 'Q':
         while trial<numTrials:
             print(trial)
-            rl.epsilon = epsilon
+            rl.explorationProb = epsilon
             simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
-            rl.epsilon = 0.0
+            rl.explorationProb = 0.0
             outcome = simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
             levelsPassed = levelsPassed + outcome['levelsPassed']
             totalRewards = totalRewards + outcome['totalRewards']
