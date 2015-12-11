@@ -201,7 +201,7 @@ if __name__ == '__main__':
     # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPOFeatureExtractor,'Q','NPPO',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPSFeatureExtractor,'Q','NPPS',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    evaluator(DRLSVI,agent.NPPFeatureExtractor,'DRLSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.0, sigma = 500)
+    # evaluator(DRLSVI,agent.NPPFeatureExtractor,'DRLSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.0, sigma = 500)
     # evaluator(RLSVI,agent.NPPFeatureExtractor,'LSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(RLSVI,agent.NPPFeatureExtractor,'RLSVI','NPP',multiple = 2.0,numTrials=50, epsilon = 0.0, sigma = 500)
@@ -234,22 +234,22 @@ if __name__ == '__main__':
     plt.title('Rewards per trials', fontsize=20)
     plt.savefig('../plots/totalReward.png')
 
-    totalRewards = {'Q_NPP_64': pickle.load(open('../results/totalRewards_Q_NPP_64.0','rb')), \
-                    'RLSVI_NPP_64': pickle.load(open('../results/totalRewards_RLSVI_NPP_64.0','rb'))}
+    totalRewards = {'Q Learning': pickle.load(open('../results/totalRewards_Q_NPP_64.0','rb')), \
+                    'RLSVI': pickle.load(open('../results/totalRewards_DRLSVI_NPP_64.0','rb'))}
     colors = ['red','blue','green','black']
 
     plt.figure()
     for i , name in enumerate(totalRewards.keys()):
-        rewards = movingAverage(totalRewards[name],window=20)
+        rewards = [x/10000.0 for x in movingAverage(totalRewards[name],window=10)]
         trials = range(len(rewards))
         plt.plot(trials,rewards,lw=2,color=colors[i], label = name)
         plt.scatter(trials,rewards)
 
     plt.legend(loc='upper left')
-    plt.xlabel('Number of trials',fontsize='large')
-    plt.ylabel('Number of total rewards',fontsize='large')
-    plt.title('Rewards per trials', fontsize=20)
-    plt.savefig('../plots/totalReward2.png')
+    plt.xlabel('Number of episodes',fontsize='large')
+    plt.ylabel('Average reward',fontsize='large')
+    plt.title('Average rewards for NPP features', fontsize=20)
+    plt.savefig('../plots/RLSVIAverageReward.png')
 
 # ############################################# Evaluation of Level 5
 #     ab = AngryBirdsMDP(level = 5)
