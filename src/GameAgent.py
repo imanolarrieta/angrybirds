@@ -28,8 +28,8 @@ class angryAgent:
         """
         # Current setting: 45 options, given by 5 distances (=launch power) and 9 angles.
         # TODO: test if reducing number of distances and increasing angles helps performance (intuition)
-        allowedAngles = [x/10.0/multiple * math.pi for x in range(5*multiple, 13*multiple, 1)] # 0.5pi (90deg upwards) to 1.25pi (45deg downwards)
-        allowedDistances = range(20, 90+1, 20 * multiple)
+        allowedAngles = [x/10.0/multiple * math.pi for x in range(int(5*multiple), int(13*multiple), 1)] # 0.5pi (90deg upwards) to 1.25pi (45deg downwards)
+        allowedDistances = range(20, 90+1, int(20 * multiple))
         return [(a, d) for a in allowedAngles for d in allowedDistances]
 
     def featureExtractorXYaction(self, state, action):
@@ -183,6 +183,23 @@ class angryAgent:
             features.append(((c+type+'_gridwidth'+str(width)+''+s+'x'+str(squarex)+'_y'+str(squarey), action), presence[(squarex, squarey)])) #An indicator of the (x,y) coordinate and the action taken
         return features
 
+    def constantActionFeature(self, state, action):
+        """
+        Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
+        This is used for function approximation [ i.e. Q(s,a)= w * featureExtractor(s, a) ]
+        :param state: a gamestate (as would be passed to Q)
+        :param action: a action (as would be passed to Q)
+        :return: dictionary/counter that gives a (potentially sparse) feature vector
+        """
+        # Current GameState:
+        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
+        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
+        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
+        # self.score = game.getScore()
+        features = []
+        features.append((('constant_action_term', action), 1)) #An indicator of the (x,y) coordinate and the action taken
+        return features
+
     def nestedGridFeatureExtractor(self, state, action, minsize=2, shifted=False, type='pig', count=True):
         """
         Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
@@ -225,25 +242,40 @@ class angryAgent:
         return features
 
 
-    def custom2FeatureExtractor(self, state, action):
+    def PPFeatureExtractor(self, state, action):
         """
-        Returns a dictionary/counter with key/value pairs that are interpreted as feature name (can be any ID) and feature value
-        This is used for function approximation [ i.e. Q(s,a)= w * featureExtractor(s, a) ]
-        :param state: a gamestate (as would be passed to Q)
-        :param action: a action (as would be passed to Q)
-        :return: dictionary/counter that gives a (potentially sparse) feature vector
         """
-        # Current GameState:
-        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
-        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
-        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
-        # self.score = game.getScore()
+        features = []
+        # rounded pig position and action indicator features
+        features += self.featureExtractorXYaction(state, action)
+        features += self.constantActionFeature(state, action)
+        return features
 
+    def NPPFeatureExtractor(self, state, action):
+        """
+        """
+        features = []
+        features += self.nestedGridFeatureExtractor(state, action, minsize=2, shifted=False, type='pig')
+        features += self.constantActionFeature(state, action)
+        return features
+
+    def NPPOFeatureExtractor(self, state, action):
+        """
+        """
         features = []
         features += self.nestedGridFeatureExtractor(state, action, minsize=2, shifted=False, type='pig')
         features += self.nestedGridFeatureExtractor(state, action, minsize=2, shifted=False, type='poly')
+        features += self.constantActionFeature(state, action)
         return features
 
+    def NPPSFeatureExtractor(self, state, action):
+        """
+        """
+        features = []
+        features += self.nestedGridFeatureExtractor(state, action, minsize=2, shifted=False, type='pig')
+        features += self.nestedGridFeatureExtractor(state, action, minsize=2, shifted=True, type='pig')
+        features += self.constantActionFeature(state, action)
+        return features
 
 
     def getAction(self, state): return self.learner.getAction(state)
@@ -258,7 +290,7 @@ if __name__=='__main__':
 
     # rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=agent.nestedGridFeatureExtractor,discount=ab.discount(),\
     #                         explorationProb=explorationProb)
-    rl = RLSVI_wrapper(actions=agent.getAngryBirdsActions,featureExtractor=agent.nestedGridFeatureExtractor)
+    rl = RLSVI_wrapper(actions=agent.getAngryBirdsActions,featureExtractor=agent.NPPSFeatureExtractor)
     simulate(ab,rl,numTrials=20, maxIterations=1000, verbose=True, show=False, episodicLearning=False)
 
 
