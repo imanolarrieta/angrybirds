@@ -8,6 +8,8 @@ from matplotlib import pyplot as plt
 import numpy as np
 import matplotlib
 from sparseLearnerRLSVI import RLSVI_wrapper as RLSVI
+from denseLearnerRLSVI import RLSVI_wrapper as DRLSVI
+
 import pickle
 
 matplotlib.use('TkAgg')
@@ -54,13 +56,28 @@ def evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,multiple = 1.0,numTr
                 trial +=1
             except AssertionError:
                 break
-    elif nameAlg == 'RLSVI':
+    elif nameAlg == 'RLSVI' or nameAlg =='DRLSVI':
         while trial<numTrials:
             try:
                 print (trial)
                 rl.rlsvi.sigma = 500.0
                 simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
-                rl.rlsvi.sigma = 1.0
+                rl.rlsvi.sigma = 500.0
+                outcome = simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
+                levelsPassed = levelsPassed + outcome['levelsPassed']
+                totalRewards = totalRewards + outcome['totalRewards']
+                print(totalRewards)
+
+                trial +=1
+            except AssertionError:
+                break
+    elif nameAlg =='DRLSVI':
+        while trial<numTrials:
+            try:
+                print (trial)
+                rl.makeRLSVI()
+                simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
+                rl.makeLSVI(0.0)
                 outcome = simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
                 levelsPassed = levelsPassed + outcome['levelsPassed']
                 totalRewards = totalRewards + outcome['totalRewards']
@@ -70,18 +87,7 @@ def evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,multiple = 1.0,numTr
             except AssertionError:
                 break
 
-        while trial<numTrials:
-            try:
-                print (trial)
-                rl.rlsvi.sigma = sigma
-                simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
-                rl.rlsvi.sigma = 1.0
-                outcome = simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
-                levelsPassed = levelsPassed + outcome['levelsPassed']
-                totalRewards = totalRewards + outcome['totalRewards']
-                trial +=1
-            except AssertionError:
-                break
+
 
 
 
@@ -169,6 +175,23 @@ def level_evaluator(level,rlAlgorithm,featureExtractor,nameAlg,nameFeat,numFeat 
     plt.title('Rewards per trials', fontsize=20)
     plt.savefig('totalRewardsL3.png')
 
+def generalize_evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,multiple=1.0,numTrials=50, epsilon = 0.3, sigma = 500):
+
+    ab_train = AngryBirdsMDP(levels = [1,3,5,7])
+    ab_test = AngryBirdsMDP(levels = [2,4,6,8])
+
+    name = nameAlg+'_'+nameFeat+'_'+str(64*multiple)
+
+
+    rl = rlAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=featureExtractor,\
+                            epsilon=epsilon)
+    trainingOutcomes = simulate(ab_train,rl,numTrials=30, maxIterations=1000, verbose=False, show=False)
+    testOutcomes = simulate(ab_test,rl,numTrials=10, maxIterations=1000, verbose=False, show=False)
+
+    with open('../results/train_'+name,'wb') as file:
+        pickle.dump(trainingOutcomes,file)
+    with open('../results/test_'+name,'wb') as file:
+        pickle.dump(testOutcomes,file)
 
 
 if __name__ == '__main__':
@@ -178,14 +201,15 @@ if __name__ == '__main__':
     # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPOFeatureExtractor,'Q','NPPO',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPSFeatureExtractor,'Q','NPPS',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    evaluator(RLSVI,agent.NPPFeatureExtractor,'RLSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.0, sigma = 500)
-    evaluator(RLSVI,agent.NPPFeatureExtractor,'LSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(DRLSVI,agent.NPPFeatureExtractor,'DRLSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.0, sigma = 500)
+    # evaluator(RLSVI,agent.NPPFeatureExtractor,'LSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(RLSVI,agent.NPPFeatureExtractor,'RLSVI','NPP',multiple = 2.0,numTrials=50, epsilon = 0.0, sigma = 500)
     # evaluator(RLSVI,agent.NPPFeatureExtractor,'LSVI','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(RLSVI,agent.NPPFeatureExtractor,'RLSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.0, sigma = 500)
-    # evaluator(RLSVI,agent.NPPFeatureExtractor,'LSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
+
+    # generalize_evaluator(RLSVI,agent.NPPFeatureExtractor,'RLSVI','NPP',multiple=1.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    # generalize_evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple=1.0,numTrials=50, epsilon = 0.3, sigma = 500)
 
     #
 
@@ -210,9 +234,8 @@ if __name__ == '__main__':
     plt.title('Rewards per trials', fontsize=20)
     plt.savefig('../plots/totalReward.png')
 
-    totalRewards = {'Q_NPP_64': pickle.load(open('../results/totalRewards_Q_NPP_128.0','rb')), \
-                    'RLSVI_NPP_64': pickle.load(open('../results/totalRewards_RLSVI_NPP_128.0','rb')),
-                    'LSVI_NPP_64': pickle.load(open('../results/totalRewards_LSVI_NPP_128.0','rb'))}
+    totalRewards = {'Q_NPP_64': pickle.load(open('../results/totalRewards_Q_NPP_64.0','rb')), \
+                    'RLSVI_NPP_64': pickle.load(open('../results/totalRewards_RLSVI_NPP_64.0','rb'))}
     colors = ['red','blue','green','black']
 
     plt.figure()
