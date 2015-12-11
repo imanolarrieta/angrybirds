@@ -2,6 +2,7 @@ import os
 import sys
 import math
 import time
+import random
 import pygame
 current_path = os.getcwd()
 sys.path.insert(0, os.path.join(current_path, "../pymunk-4.0.0"))
@@ -18,10 +19,12 @@ import AngryBirds
 class AngryBirdsMDP:
 
     # Initializes the game
-    def __init__(self,level = -1):
+    def __init__(self,startLevel = -1,repeat=False, levels=[]):
         self.game = AngryBirds.AngryBirdsGame()
         self.show=False
-        self.level = level
+        self.startLevel = startLevel
+        self.repeat=repeat
+        self.levels = levels
 
     def showLearning(self):
         self.show = True
@@ -36,7 +39,7 @@ class AngryBirdsMDP:
     def startState(self):
         # TODO Initialize with different levels
         self.game = AngryBirds.AngryBirdsGame()
-        if self.level>-1:
+        if self.startLevel>-1:
             self.game.startAtLevel(self.level)
         return GameState(self.game)
 
@@ -55,11 +58,14 @@ class AngryBirdsMDP:
 
         if state.isEnd():
             if state.isWin():
-                if self.level==-1:
-                    self.game.startNewLevel()
+                if self.repeat:
+                    self.game.restartGame()
+                    return (GameState(self.game),0)
+                elif len(self.levels)>0:
+                    self.game.startAtLevel(random.choice(self.levels))
                     return (GameState(self.game),0)
                 else:
-                    self.game.restartGame()
+                    self.game.startNewLevel()
                     return (GameState(self.game),0)
             else:
                 return (None,-50000)
