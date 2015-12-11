@@ -139,12 +139,12 @@ class RLSVI:
         if np.random.rand() < self.epsilon:
             return np.random.randint(self.nAction)
         else:
-            qVals = obs*self.thetaSamps[t].tocoo()
+            qVals = (obs*self.thetaSamps[t]).tocoo()
             if len(qVals.data)==0:
                 return np.random.randint(self.nAction)
             else:
-                I = qVals.data.argmax()
-            return I
+               I = qVals.data.argmax()
+            return qVals.row[I]
 
 #-------------------------------------------------------------------------------
 
