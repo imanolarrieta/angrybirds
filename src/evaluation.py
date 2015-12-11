@@ -161,8 +161,8 @@ def level_evaluator(level,rlAlgorithm,featureExtractor,nameAlg,nameFeat,numFeat 
 if __name__ == '__main__':
 
     agent = angryAgent()
-    evaluator(QLearningAlgorithm,agent.PPFeatureExtractor,'Q','PP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    # evaluator(QLearningAlgorithm,agent.PPFeatureExtractor,'Q','PP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPOFeatureExtractor,'Q','NPPO',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPSFeatureExtractor,'Q','NPPO',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(RLSVI,agent.featureExtractorXYaction,'RLSVI','PP',numFeat = 1.0,numTrials=50, epsilon = 0.0, sigma = 500)
