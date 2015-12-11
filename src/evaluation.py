@@ -36,6 +36,7 @@ def evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,multiple = 1.0,numTr
             outcome = simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
             levelsPassed = levelsPassed + outcome['levelsPassed']
             totalRewards = totalRewards + outcome['totalRewards']
+            print(totalRewards)
             trial +=1
 
     elif nameAlg == 'LSVI':
@@ -48,6 +49,8 @@ def evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,multiple = 1.0,numTr
                 outcome = simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
                 levelsPassed = levelsPassed + outcome['levelsPassed']
                 totalRewards = totalRewards + outcome['totalRewards']
+                print(totalRewards)
+
                 trial +=1
             except AssertionError:
                 break
@@ -55,12 +58,14 @@ def evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,multiple = 1.0,numTr
         while trial<numTrials:
             try:
                 print (trial)
-                rl.makeRLSVI()
+                rl.rlsvi.sigma = 500.0
                 simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
-                rl.makeLSVI(0.0)
+                rl.rlsvi.sigma = 1.0
                 outcome = simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
                 levelsPassed = levelsPassed + outcome['levelsPassed']
                 totalRewards = totalRewards + outcome['totalRewards']
+                print(totalRewards)
+
                 trial +=1
             except AssertionError:
                 break
@@ -173,37 +178,55 @@ if __name__ == '__main__':
     # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPOFeatureExtractor,'Q','NPPO',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPSFeatureExtractor,'Q','NPPS',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'RLSVI','NPP',numFeat = 1.0,numTrials=50, epsilon = 0.0, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'LSVI','NPP',numFeat = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(RLSVI,agent.NPPFeatureExtractor,'RLSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.0, sigma = 500)
+    evaluator(RLSVI,agent.NPPFeatureExtractor,'LSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'RLSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.0, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'LSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    # evaluator(RLSVI,agent.NPPFeatureExtractor,'RLSVI','NPP',multiple = 2.0,numTrials=50, epsilon = 0.0, sigma = 500)
+    # evaluator(RLSVI,agent.NPPFeatureExtractor,'LSVI','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'RLSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.0, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'LSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    # evaluator(RLSVI,agent.NPPFeatureExtractor,'RLSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.0, sigma = 500)
+    # evaluator(RLSVI,agent.NPPFeatureExtractor,'LSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
 
     #
 
-    # trials = range(1,42)
-    #
-    # #Comparison
-    # totalRewards = {'Q_PP_64': pickle.load(open('../results/totalRewards_Q_PP_64.0','rb')), \
-    #             'Q_NPP_64': pickle.load(open('../results/totalRewards_Q_NPP_64.0','rb')),\
-    #             'Q_NPPO_64': pickle.load(open('../results/totalRewards_Q_NPPO_64.0','rb')),\
-    #             'Q_NPPS_64': pickle.load(open('../results/totalRewards_Q_NPPS_64.0','rb'))}
-    # colors = ['red','blue','green','black']
-    #
-    # plt.figure()
-    # for i , name in enumerate(totalRewards.keys()):
-    #     rewards = movingAverage(totalRewards[name])
-    #     plt.plot(trials,rewards,lw=2,color=colors[i], label = name)
-    #     plt.scatter(trials,rewards)
-    #
-    # plt.legend(loc='upper left')
-    # plt.xlabel('Number of trials',fontsize='large')
-    # plt.ylabel('Number of total rewards',fontsize='large')
-    # plt.title('Rewards per trials', fontsize=20)
-    # plt.savefig('../plots/totalReward.png')
+    trials = range(1,42)
+
+    #Comparison
+    totalRewards = {'Q_PP_64': pickle.load(open('../results/totalRewards_Q_PP_64.0','rb')), \
+                'Q_NPP_64': pickle.load(open('../results/totalRewards_Q_NPP_64.0','rb')),\
+                'Q_NPPO_64': pickle.load(open('../results/totalRewards_Q_NPPO_64.0','rb')),\
+                'Q_NPPS_64': pickle.load(open('../results/totalRewards_Q_NPPS_64.0','rb'))}
+    colors = ['red','blue','green','black']
+
+    plt.figure()
+    for i , name in enumerate(totalRewards.keys()):
+        rewards = movingAverage(totalRewards[name])
+        plt.plot(trials,rewards,lw=2,color=colors[i], label = name)
+        plt.scatter(trials,rewards)
+
+    plt.legend(loc='upper left')
+    plt.xlabel('Number of trials',fontsize='large')
+    plt.ylabel('Number of total rewards',fontsize='large')
+    plt.title('Rewards per trials', fontsize=20)
+    plt.savefig('../plots/totalReward.png')
+
+    totalRewards = {'Q_NPP_64': pickle.load(open('../results/totalRewards_Q_NPP_128.0','rb')), \
+                    'RLSVI_NPP_64': pickle.load(open('../results/totalRewards_RLSVI_NPP_128.0','rb')),
+                    'LSVI_NPP_64': pickle.load(open('../results/totalRewards_LSVI_NPP_128.0','rb'))}
+    colors = ['red','blue','green','black']
+
+    plt.figure()
+    for i , name in enumerate(totalRewards.keys()):
+        rewards = movingAverage(totalRewards[name],window=20)
+        trials = range(len(rewards))
+        plt.plot(trials,rewards,lw=2,color=colors[i], label = name)
+        plt.scatter(trials,rewards)
+
+    plt.legend(loc='upper left')
+    plt.xlabel('Number of trials',fontsize='large')
+    plt.ylabel('Number of total rewards',fontsize='large')
+    plt.title('Rewards per trials', fontsize=20)
+    plt.savefig('../plots/totalReward2.png')
 
 # ############################################# Evaluation of Level 5
 #     ab = AngryBirdsMDP(level = 5)
