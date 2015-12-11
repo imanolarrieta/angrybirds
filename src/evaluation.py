@@ -15,17 +15,17 @@ matplotlib.use('TkAgg')
 
 
 
-def evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500):
+def evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500):
     ab = AngryBirdsMDP()
     trial = 0
     levelsPassed=[]
     totalRewards =[]
-    name = nameAlg+'_'+nameFeat+'_'+str(numFeat)
+    name = nameAlg+'_'+nameFeat+'_'+str(64*multiple)
 
     agent = angryAgent()
 
 
-    rl = rlAlgorithm(actions=lambda x: agent.getAngryBirdsActions(x,numFeat),featureExtractor=featureExtractor, epsilon = epsilon)
+    rl = rlAlgorithm(actions=lambda x: agent.getAngryBirdsActions(x,multiple),featureExtractor=featureExtractor, epsilon = epsilon)
 
     if nameAlg == 'Q':
         while trial<numTrials:
@@ -160,9 +160,9 @@ def level_evaluator(level,rlAlgorithm,featureExtractor,nameAlg,nameFeat,numFeat 
 if __name__ == '__main__':
 
     agent = angryAgent()
-    evaluator(QLearningAlgorithm,agent.featureExtractorXYaction,'Q','PP',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
-    evaluator(QLearningAlgorithm,agent.nestedGridFeatureExtractor,'Q','NPP',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
-    evaluator(QLearningAlgorithm,agent.custom2FeatureExtractor,'Q','NPPO',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(QLearningAlgorithm,agent.featureExtractorXYaction,'Q','PP',multiple = 64,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(QLearningAlgorithm,agent.nestedGridFeatureExtractor,'Q','NPP',multiple = 64,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(QLearningAlgorithm,agent.custom2FeatureExtractor,'Q','NPPO',multiple = 64,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(RLSVI,agent.featureExtractorXYaction,'RLSVI','PP',numFeat = 64,numTrials=50, epsilon = 0.0, sigma = 500)
     # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'RLSVI','NPP',numFeat = 64,numTrials=50, epsilon = 0.0, sigma = 500)
     # evaluator(RLSVI,agent.custom2FeatureExtractor,'RLSVI','NPPO',numFeat = 64,numTrials=50, epsilon = 0.0, sigma = 500)

@@ -37,6 +37,7 @@ class QLearningAlgorithm():
         :return: the chosen action
         """
         self.numIters += 1
+        print(len(self.actions(state)))
         if random.random() < self.explorationProb:
             return random.choice(self.actions(state))
         else:
