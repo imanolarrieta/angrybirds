@@ -160,16 +160,16 @@ def level_evaluator(level,rlAlgorithm,featureExtractor,nameAlg,nameFeat,numFeat 
 if __name__ == '__main__':
 
     agent = angryAgent()
-    evaluator(QLearningAlgorithm,agent.featureExtractorXYaction,'Q','PP',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
-    evaluator(QLearningAlgorithm,agent.nestedGridFeatureExtractor,'Q','NPP',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
-    evaluator(QLearningAlgorithm,agent.custom2FeatureExtractor,'Q','NPPO',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
+    # evaluator(QLearningAlgorithm,agent.featureExtractorXYaction,'Q','PP',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
+    # evaluator(QLearningAlgorithm,agent.nestedGridFeatureExtractor,'Q','NPP',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
+    # evaluator(QLearningAlgorithm,agent.custom2FeatureExtractor,'Q','NPPO',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(RLSVI,agent.featureExtractorXYaction,'RLSVI','PP',numFeat = 64,numTrials=50, epsilon = 0.0, sigma = 500)
     # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'RLSVI','NPP',numFeat = 64,numTrials=50, epsilon = 0.0, sigma = 500)
     # evaluator(RLSVI,agent.custom2FeatureExtractor,'RLSVI','NPPO',numFeat = 64,numTrials=50, epsilon = 0.0, sigma = 500)
-    # evaluator(RLSVI,agent.featureExtractorXYaction,'LSVI','PP',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'LSVI','NPP',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(RLSVI,agent.custom2FeatureExtractor,'LSVI','NPPO',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
-    #
+    evaluator(RLSVI,agent.featureExtractorXYaction,'LSVI','PP',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(RLSVI,agent.nestedGridFeatureExtractor,'LSVI','NPP',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(RLSVI,agent.custom2FeatureExtractor,'LSVI','NPPO',numFeat = 64,numTrials=50, epsilon = 0.3, sigma = 500)
+
 
 #
 # ############################################# Evaluation of Level 5
