@@ -1,3 +1,9 @@
+#AngryBirds
+#The original code was modified into an object-oriented setting, creating the class AngryBirdsGame. We define the basic methods that
+# will let us extract all game features and manipulate the underlying game mechanics- we will now be able to set levels, get scores,
+# extract pig positions, perform an action, run a certain number of frames, and so on.
+
+
 import os
 import sys
 import math
@@ -678,8 +684,4 @@ class AngryBirdsGame:
 
 if __name__=='__main__':
     ab = AngryBirdsGame()
-    # ab.runFrames(50,show=True)
-    # ab.performAction(-0.3,-70.9)
-    # ab.runUntilStatic(show=True)
-    # print('Now in human play')
     ab.humanPlay()

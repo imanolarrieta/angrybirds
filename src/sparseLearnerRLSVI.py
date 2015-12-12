@@ -7,6 +7,8 @@ On the algorithm: http://arxiv.org/abs/1402.0635
 Adapted (wrapper structure) by Lars Roemheld, roemheld@stanford.edu
 Changed to sparse matrices by Bernardo Ramos, bramos@stanford.edu
 '''
+#This code is DenseLearnerRLSVI.py except we treat sparse matrix operations at all steps. This highly improves the performance when running simulations.
+
 import scipy.sparse as sp
 import numpy as np
 import random

@@ -1,3 +1,9 @@
+#abAPI
+#This API contains the definition of the Angry Birds as an approximate MDP (define states and their successors
+# by manipulating the AngryBirdsGame class in AngryBirds.py). We also define a simplified version of the Game States
+#  by extracting all necessary information to run algorthms.
+
+
 import os
 import sys
 import math

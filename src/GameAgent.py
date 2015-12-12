@@ -4,6 +4,10 @@
 # Framework for applying different learning algorithms on the Angrybirds game
 # This file can be run to simulate a game with the agent playing
 
+#GameAgent
+#The class GameAgent defines the possible actions the bird can take, as well as all feature extractors described in the paper.
+
+
 # TODO just pretend API exists already
 from QLearner import QLearningAlgorithm
 from sparseLearnerRLSVI import RLSVI_wrapper
@@ -40,11 +44,6 @@ class angryAgent:
         :param action: a action (as would be passed to Q)
         :return: dictionary/counter that gives a (potentially sparse) feature vector
         """
-        # Current GameState:
-        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
-        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
-        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
-        # self.score = game.getScore()
 
         features = []
         # rounded pig position and action indicator features
@@ -62,11 +61,6 @@ class angryAgent:
         :param action: a action (as would be passed to Q)
         :return: dictionary/counter that gives a (potentially sparse) feature vector
         """
-        # Current GameState:
-        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
-        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
-        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
-        # self.score = game.getScore()
 
         features = []
         angle = action[0]
@@ -90,11 +84,6 @@ class angryAgent:
         :param action: a action (as would be passed to Q)
         :return: dictionary/counter that gives a (potentially sparse) feature vector
         """
-        # Current GameState:
-        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
-        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
-        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
-        # self.score = game.getScore()
 
         features = []
         angle = action[0]
@@ -115,11 +104,6 @@ class angryAgent:
         :param action: a action (as would be passed to Q)
         :return: dictionary/counter that gives a (potentially sparse) feature vector
         """
-        # Current GameState:
-        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
-        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
-        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
-        # self.score = game.getScore()
 
         features = []
         positions = sorted(state.pigs['positions'])
@@ -141,11 +125,6 @@ class angryAgent:
         :param action: a action (as would be passed to Q)
         :return: dictionary/counter that gives a (potentially sparse) feature vector
         """
-        # Current GameState:
-        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
-        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
-        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
-        # self.score = game.getScore()
 
         width = size*28.0 #This is |size| times the diameter of a pig
         features = []
@@ -191,11 +170,6 @@ class angryAgent:
         :param action: a action (as would be passed to Q)
         :return: dictionary/counter that gives a (potentially sparse) feature vector
         """
-        # Current GameState:
-        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
-        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
-        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
-        # self.score = game.getScore()
         features = []
         features.append((('constant_action_term', action), 1)) #An indicator of the (x,y) coordinate and the action taken
         return features
@@ -208,11 +182,6 @@ class angryAgent:
         :param action: a action (as would be passed to Q)
         :return: dictionary/counter that gives a (potentially sparse) feature vector
         """
-        # Current GameState:
-        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
-        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
-        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
-        # self.score = game.getScore()
         features = []
         size = 10.5
         while size > minsize:
@@ -228,11 +197,6 @@ class angryAgent:
         :param action: a action (as would be passed to Q)
         :return: dictionary/counter that gives a (potentially sparse) feature vector
         """
-        # Current GameState:
-        # self.birds = {'number': len(game.getBirds()), 'positions': game.getBirdPositions()}
-        # self.pigs = {'number': len(game.getPigs()), 'positions': game.getPigPositions()}
-        # self.polys = {'number': len(game.getPolys()), 'features': game.getPolyFeatures()}
-        # self.score = game.getScore()
 
         features = []
         # rounded pig position and action indicator features

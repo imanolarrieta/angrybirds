@@ -1,6 +1,7 @@
 # Q-Learner for Angrybirds, using function approximation
 # Imanol Arrieta, Bernardo Ramos, Lars Roemheld
 # Adapted from a homework assignment in Percy Liang's class CS221 at Stanford University
+
 import collections
 import random
 import math
