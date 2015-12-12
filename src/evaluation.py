@@ -173,8 +173,8 @@ if __name__ == '__main__':
     # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPOFeatureExtractor,'Q','NPPO',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPSFeatureExtractor,'Q','NPPS',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    evaluator(RLSVI,agent.nestedGridFeatureExtractor,'RLSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.0, sigma = 500)
-    evaluator(RLSVI,agent.nestedGridFeatureExtractor,'LSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'RLSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.0, sigma = 500)
+    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'LSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
     # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'RLSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.0, sigma = 500)
     # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'LSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
@@ -184,26 +184,26 @@ if __name__ == '__main__':
 
     #
 
-    # trials = range(1,42)
-    #
-    # #Comparison
-    # totalRewards = {'Q_PP_64': pickle.load(open('../results/totalRewards_Q_PP_64.0','rb')), \
-    #             'Q_NPP_64': pickle.load(open('../results/totalRewards_Q_NPP_64.0','rb')),\
-    #             'Q_NPPO_64': pickle.load(open('../results/totalRewards_Q_NPPO_64.0','rb')),\
-    #             'Q_NPPS_64': pickle.load(open('../results/totalRewards_Q_NPPS_64.0','rb'))}
-    # colors = ['red','blue','green','black']
-    #
-    # plt.figure()
-    # for i , name in enumerate(totalRewards.keys()):
-    #     rewards = movingAverage(totalRewards[name])
-    #     plt.plot(trials,rewards,lw=2,color=colors[i], label = name)
-    #     plt.scatter(trials,rewards)
-    #
-    # plt.legend(loc='upper left')
-    # plt.xlabel('Number of trials',fontsize='large')
-    # plt.ylabel('Number of total rewards',fontsize='large')
-    # plt.title('Rewards per trials', fontsize=20)
-    # plt.savefig('../plots/totalReward.png')
+    trials = range(1,42)
+
+    #Comparison
+    totalRewards = {'PP': pickle.load(open('../results/totalRewards_Q_PP_64.0','rb')), \
+                'NPP': pickle.load(open('../results/totalRewards_Q_NPP_64.0','rb')),\
+                'NPPO': pickle.load(open('../results/totalRewards_Q_NPPO_64.0','rb')),\
+                'NPPS': pickle.load(open('../results/totalRewards_Q_NPPS_64.0','rb'))}
+    colors = ['red','blue','green','black']
+
+    plt.figure()
+    for i , name in enumerate(totalRewards.keys()):
+        rewards = [x/10000 for x in movingAverage(totalRewards[name])]
+        plt.plot(trials,rewards,lw=2,color=colors[i], label = name)
+        plt.scatter(trials,rewards)
+
+    plt.legend(loc='upper left')
+    plt.xlabel('Number of episodes',fontsize='large')
+    plt.ylabel('Average reward',fontsize='large')
+    plt.title('Q-Learning Average Rewards', fontsize=20)
+    plt.savefig('../plots/QAverageReward.png')
 
 # ############################################# Evaluation of Level 5
 #     ab = AngryBirdsMDP(level = 5)
