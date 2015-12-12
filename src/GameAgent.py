@@ -29,7 +29,7 @@ class angryAgent:
         # Current setting: 45 options, given by 5 distances (=launch power) and 9 angles.
         # TODO: test if reducing number of distances and increasing angles helps performance (intuition)
         allowedAngles = [x/10.0/multiple * math.pi for x in range(int(5*multiple), int(13*multiple), 1)] # 0.5pi (90deg upwards) to 1.25pi (45deg downwards)
-        allowedDistances = range(20, 90+1, int(20/multiple))
+        allowedDistances = range(20, 90+1, int(20 / multiple))
         return [(a, d) for a in allowedAngles for d in allowedDistances]
 
     def featureExtractorXYaction(self, state, action):

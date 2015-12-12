@@ -8,6 +8,8 @@ from matplotlib import pyplot as plt
 import numpy as np
 import matplotlib
 from sparseLearnerRLSVI import RLSVI_wrapper as RLSVI
+from denseLearnerRLSVI import RLSVI_wrapper as DRLSVI
+
 import pickle
 
 matplotlib.use('TkAgg')
@@ -36,6 +38,7 @@ def evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,multiple = 1.0,numTr
             outcome = simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
             levelsPassed = levelsPassed + outcome['levelsPassed']
             totalRewards = totalRewards + outcome['totalRewards']
+            print(totalRewards)
             trial +=1
 
     elif nameAlg == 'LSVI':
@@ -48,10 +51,27 @@ def evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,multiple = 1.0,numTr
                 outcome = simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
                 levelsPassed = levelsPassed + outcome['levelsPassed']
                 totalRewards = totalRewards + outcome['totalRewards']
+                print(totalRewards)
+
                 trial +=1
             except AssertionError:
                 break
-    elif nameAlg == 'RLSVI':
+    elif nameAlg == 'RLSVI' or nameAlg =='DRLSVI':
+        while trial<numTrials:
+            try:
+                print (trial)
+                rl.rlsvi.sigma = 500.0
+                simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
+                rl.rlsvi.sigma = 500.0
+                outcome = simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
+                levelsPassed = levelsPassed + outcome['levelsPassed']
+                totalRewards = totalRewards + outcome['totalRewards']
+                print(totalRewards)
+
+                trial +=1
+            except AssertionError:
+                break
+    elif nameAlg =='DRLSVI':
         while trial<numTrials:
             try:
                 print (trial)
@@ -61,22 +81,13 @@ def evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,multiple = 1.0,numTr
                 outcome = simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
                 levelsPassed = levelsPassed + outcome['levelsPassed']
                 totalRewards = totalRewards + outcome['totalRewards']
+                print(totalRewards)
+
                 trial +=1
             except AssertionError:
                 break
 
-        while trial<numTrials:
-            try:
-                print (trial)
-                rl.rlsvi.sigma = sigma
-                simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
-                rl.rlsvi.sigma = 1.0
-                outcome = simulate(ab,rl,numTrials=1, maxIterations=1000, verbose=False, show=False)
-                levelsPassed = levelsPassed + outcome['levelsPassed']
-                totalRewards = totalRewards + outcome['totalRewards']
-                trial +=1
-            except AssertionError:
-                break
+
 
 
 
@@ -164,25 +175,41 @@ def level_evaluator(level,rlAlgorithm,featureExtractor,nameAlg,nameFeat,numFeat 
     plt.title('Rewards per trials', fontsize=20)
     plt.savefig('totalRewardsL3.png')
 
+def generalize_evaluator(rlAlgorithm,featureExtractor,nameAlg,nameFeat,multiple=1.0,numTrials=50, epsilon = 0.3, sigma = 500):
+
+    ab_train = AngryBirdsMDP(levels = [1,3,5,7])
+    ab_test = AngryBirdsMDP(levels = [2,4,6,8])
+
+    name = nameAlg+'_'+nameFeat+'_'+str(64*multiple)
+
+
+    rl = rlAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=featureExtractor,\
+                            epsilon=epsilon)
+    trainingOutcomes = simulate(ab_train,rl,numTrials=30, maxIterations=1000, verbose=False, show=False)
+    testOutcomes = simulate(ab_test,rl,numTrials=10, maxIterations=1000, verbose=False, show=False)
+
+    with open('../results/train_'+name,'wb') as file:
+        pickle.dump(trainingOutcomes,file)
+    with open('../results/test_'+name,'wb') as file:
+        pickle.dump(testOutcomes,file)
 
 
 if __name__ == '__main__':
 
     agent = angryAgent()
-    # evaluator(QLearningAlgorithm,agent.PPFeatureExtractor,'Q','PP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(QLearningAlgorithm,agent.NPPOFeatureExtractor,'Q','NPPO',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(QLearningAlgorithm,agent.NPPSFeatureExtractor,'Q','NPPS',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'RLSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.0, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'LSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'RLSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.0, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'LSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'RLSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.0, sigma = 500)
-    # evaluator(RLSVI,agent.nestedGridFeatureExtractor,'LSVI','NPP',numFeat = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(QLearningAlgorithm,agent.PPFeatureExtractor,'Q','PP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(QLearningAlgorithm,agent.NPPOFeatureExtractor,'Q','NPPO',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(QLearningAlgorithm,agent.NPPSFeatureExtractor,'Q','NPPS',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(DRLSVI,agent.NPPFeatureExtractor,'DRLSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.0, sigma = 500)
+    evaluator(RLSVI,agent.NPPFeatureExtractor,'LSVI','NPP',multiple = 1.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(RLSVI,agent.NPPFeatureExtractor,'RLSVI','NPP',multiple = 2.0,numTrials=50, epsilon = 0.0, sigma = 500)
+    evaluator(RLSVI,agent.NPPFeatureExtractor,'LSVI','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple = 2.0,numTrials=50, epsilon = 0.3, sigma = 500)
 
-    #
+    generalize_evaluator(RLSVI,agent.NPPFeatureExtractor,'RLSVI','NPP',multiple=1.0,numTrials=50, epsilon = 0.3, sigma = 500)
+    generalize_evaluator(QLearningAlgorithm,agent.NPPFeatureExtractor,'Q','NPP',multiple=1.0,numTrials=50, epsilon = 0.3, sigma = 500)
 
     trials = range(1,42)
 
@@ -195,72 +222,13 @@ if __name__ == '__main__':
 
     plt.figure()
     for i , name in enumerate(totalRewards.keys()):
-        rewards = [x/10000 for x in movingAverage(totalRewards[name])]
+        rewards = [x/10000.0 for x in movingAverage(totalRewards[name],window=10)]
+        trials = range(len(rewards))
         plt.plot(trials,rewards,lw=2,color=colors[i], label = name)
         plt.scatter(trials,rewards)
 
     plt.legend(loc='upper left')
     plt.xlabel('Number of episodes',fontsize='large')
     plt.ylabel('Average reward',fontsize='large')
-    plt.title('Q-Learning Average Rewards', fontsize=20)
-    plt.savefig('../plots/QAverageReward.png')
-
-# ############################################# Evaluation of Level 5
-#     ab = AngryBirdsMDP(level = 5)
-#     explorationProb = 0.3
-#     numTrials = 50
-#     agent = angryAgent()
-#
-#     rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=featureExtractor,discount=ab.discount(),\
-#                             explorationProb=explorationProb)
-#     trainingOutcomes = simulate(ab,rl,numTrials=numTrials, maxIterations=1000, verbose=False, show=False)
-#
-#     explorationProb = 0
-#     agent = angryAgent()
-#     rl.setExplorationProb(explorationProb)
-#     testOutcomes = simulate(ab,rl,numTrials=5,verbose = False, show=False)
-#
-#     print(trainingOutcomes)
-#     print(testOutcomes)
-#     totalRewards = trainingOutcomes['totalRewards']
-#     trials = range(1,numTrials+1)
-#
-#
-#     plt.figure()
-#     plt.plot(trials,totalRewards,lw=2,color='green')
-#     plt.scatter(trials,totalRewards)
-#     plt.xlabel('Number of trials',fontsize='large')
-#     plt.ylabel('Number of total rewards for level 5',fontsize='large')
-#     plt.title('Rewards per trials', fontsize=20)
-#     plt.savefig('totalRewardsL5.png')
-#
-# ############################################# Evaluation of Level 5 while training in 3
-#     ab = AngryBirdsMDP(level = 7)
-#     explorationProb = 0.3
-#     numTrials = 50
-#     agent = angryAgent()
-#
-#     rl = QLearningAlgorithm(actions=agent.getAngryBirdsActions,featureExtractor=featureExtractor,discount=ab.discount(),\
-#                             explorationProb=explorationProb)
-#     trainingOutcomes = simulate(ab,rl,numTrials=numTrials, maxIterations=1000, verbose=False, show=False)
-#
-#     explorationProb = 0
-#     ab = AngryBirdsMDP(level = 7)
-#     agent = angryAgent()
-#     rl.setExplorationProb(explorationProb)
-#     testOutcomes = simulate(ab,rl,numTrials=5,verbose = False  , show=False)
-#
-#     print(trainingOutcomes)
-#     print(testOutcomes)
-#     totalRewards = trainingOutcomes['totalRewards']
-#     trials = range(1,numTrials+1)
-#
-#
-#     plt.figure()
-#     plt.plot(trials,totalRewards,lw=2,color='green')
-#     plt.scatter(trials,totalRewards)
-#     plt.xlabel('Number of trials',fontsize='large')
-#     plt.ylabel('Number of total rewards for level 7',fontsize='large')
-#     plt.title('Rewards per trials', fontsize=20)
-#     plt.savefig('totalRewardsL7.png')
-#
+    plt.title('Average rewards for NPP features', fontsize=20)
+    plt.savefig('../plots/RLSVIAverageReward.png')
