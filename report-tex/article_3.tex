@@ -77,7 +77,7 @@
 
 Angry Birds has been a wildly successful internet franchise centered around an original mobile game in which players shoot birds out of a slingshot to hit targets for points. Angry Birds is largely a deterministic game: %
 \footnote{In our simulation, the physics engine actually seemed to produce semi-random results: the same sequence of moves was not guaranteed to yield the exact same outcomes.} %
-a complex physics engine governs flight, collision and impact to appear almost realistically. As such, optimal gameplay could be achieved by optimizing a highly complex function that describes trajectory planning -- instead, we train several reinforcement learning algorithms to play the game, comparing their final performance and learning speeds.
+a complex physics engine governs flight, collision and impact to appear almost realistically. As such, optimal gameplay could be achieved by optimizing a highly complex function that describes trajectory planning -- instead, we train several reinforcement learning algorithms to play the game, and compare their final performance and learning speeds with that of a human-play oracle.
 
 To simulate gameplay, we adapted an open-source project to recreate Angry Birds in Python \cite{estevaofon} using the Pygame framework. After adapting the base code for our needs, we designed an API which exposed the game as a Markov Decision Process (MDP), largely following the conventions of our class framework.
 
@@ -233,7 +233,7 @@ It should be noted that in our implementation, RLSVI required significantly more
 
 \subsection{Learning success}
 
-Neither a human player nor any of the algorithms managed to go through all 11 levels provided by the game engine we used in one attempt. Both the regular Q-Learner and RLSVI however outperformed the human player (who shall remain unnamed, given that he was shamefully beat by crude algorithms) in terms of maximum points achieved in a single attempt, and in terms of the highest level reached. Table \ref{tab:max_score} summarizes the maximum score attained and the highest level reached for different players.
+Neither a human player -our oracle for score comparison- nor any of the algorithms managed to go through all 11 levels provided by the game engine we used in one attempt. Both the regular Q-Learner and RLSVI however outperformed the human player (who shall remain unnamed, given that he was shamefully beat by crude algorithms) in terms of maximum points achieved in a single attempt, and in terms of the highest level reached. Table \ref{tab:max_score} summarizes the maximum score attained and the highest level reached for different players.
 
 \begin{table}[hbt]
 \centering
@@ -288,7 +288,7 @@ In the same vein, it would be interesting to train a deep neural network for the
 Finally, it may be interesting to explore different distribution assumptions within RLSVI; assuming least-squares noise to be normally distributed, and therefore sampling from a normal distribution around expected optimal policies may be particularly prone to get stuck in local minima. Using bootstrapping methods in lieu of closed-form Bayesian updates may prove to be a powerful improvement on the RLSVI algorithm explored here.
 
 \section*{Appendix} % The \section*{} command stops section numbering
-Out work can be found at \\ \url{github.com/imanolarrieta/angrybirds}.
+Our work can be found at \\ \url{github.com/imanolarrieta/angrybirds}. Original codes for Angry Birds in Python can be found at \url{https://github.com/estevaofon/angry-birds-python}.
 
 % %------------------------------------------------
 % \phantomsection
