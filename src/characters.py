@@ -1,3 +1,6 @@
+#characters
+#This file defines all characteristics for pigs and birds, such as mass, life, radius, body, shape and velocity.
+
 import pymunk as pm
 from pymunk import Vec2d
 

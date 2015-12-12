@@ -15,7 +15,7 @@ This file contains the codes for generating results and graphs by running it as 
 #GameAgent
 The class GameAgent defines the possible actions the bird can take, as well as all feature extractors described in the paper.
 
-#LearnerRLSVI
+#DenseLearnerRLSVI
 In this code the RLSVI algorithm is defined and adapted to our code using the RLSVI_wrapper class.
 
 #level
@@ -28,7 +28,7 @@ Similar to characters, this code defines all characteristics of beams.
 This code defines the Q-Learning algorithm based on the class’s code.
 
 #sparseLearnerRLSVI
-This code is LearnerRLSVI.py except we treat sparse matrix operations at all steps. This highly improves the performance when running simulations.
+This code is DenseLearnerRLSVI.py except we treat sparse matrix operations at all steps. This highly improves the performance when running simulations.
 
 #util
 This file contains the basic tools we used in class to run simulations of the reinforcement learning algorithm. We adapted it so that we can set feedback incorporation after each action or after each episode.

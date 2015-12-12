@@ -1,3 +1,7 @@
+#level
+#This code contains the elements that define all 11 levels (number and positions of pigs and beams).
+
+
 from characters import Pig
 from polygon import Polygon
 

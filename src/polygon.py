@@ -1,3 +1,7 @@
+#polygon
+#Similar to characters, this code defines all characteristics of beams.
+
+
 import pymunk as pm
 from pymunk import Vec2d
 import pygame

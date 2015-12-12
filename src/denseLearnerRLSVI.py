@@ -1,3 +1,7 @@
+#DenseLearnerRLSVI
+#In this code the RLSVI algorithm is defined and adapted to our code using the RLSVI_wrapper class.
+
+
 '''
 Simple implementation of RLSVI agent.
 
