@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 #evaluation
 #This file contains the codes for generating results and graphs by running it as __main__ and uncommenting the evaluator
 # functions for each feature extractor (PP, NPP, NPPO, NPPS) and algorithm (Q-Learning, RLSVI).
