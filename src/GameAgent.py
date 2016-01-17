@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Learning Agent for Angrybirds
 # Imanol Arrieta, Bernardo Ramos, Lars Roemheld
 #

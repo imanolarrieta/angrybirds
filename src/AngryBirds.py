@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 #AngryBirds
 #The original code was modified into an object-oriented setting, creating the class AngryBirdsGame. We define the basic methods that
 # will let us extract all game features and manipulate the underlying game mechanics- we will now be able to set levels, get scores,
